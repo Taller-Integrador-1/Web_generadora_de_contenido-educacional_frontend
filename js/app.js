@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://halayoc-edtech-api.hf.space';
+const API_BASE_URL = 'https://halayoc-edtech-backend.hf.space';
 
 const AppState = {
     usuario_id: null,
