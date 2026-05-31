@@ -1,5 +1,7 @@
 let adminStudentsList = [];
 let selectedStudent = null;
+let adminActiveTab = 'students';
+let adminPendingExercises = [];
 
 function createAdminDashboard() {
     return `
@@ -25,52 +27,270 @@ function createAdminDashboard() {
                 </div>
             </header>
 
-            <main class="admin-main-content">
-                <div class="admin-welcome-section">
-                    <div class="admin-welcome-title">
-                        <h2>Gestión de Estudiantes</h2>
-                        <p>Monitorea y configura en tiempo real el progreso de los alumnos en la base de datos.</p>
-                    </div>
+            <main class="admin-main-content" style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+                <!-- Pestañas de Navegación -->
+                <div class="admin-tabs" style="display: flex; gap: 1.5rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem;">
+                    <button class="admin-tab-btn" onclick="switchAdminTab('students')" style="background: none; border: none; font-size: 1.1rem; font-weight: 600; padding: 0.5rem 1.5rem; cursor: pointer; color: ${adminActiveTab === 'students' ? '#4f46e5' : '#64748b'}; border-bottom: ${adminActiveTab === 'students' ? '4px solid #4f46e5' : 'none'}; outline: none; transition: all 0.2s;">
+                        Gestión de Estudiantes
+                    </button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('syllabus')" style="background: none; border: none; font-size: 1.1rem; font-weight: 600; padding: 0.5rem 1.5rem; cursor: pointer; color: ${adminActiveTab === 'syllabus' ? '#4f46e5' : '#64748b'}; border-bottom: ${adminActiveTab === 'syllabus' ? '4px solid #4f46e5' : 'none'}; outline: none; transition: all 0.2s;">
+                        Cargar Sílabo y Ejercicios
+                    </button>
                 </div>
 
-                <div class="admin-grid-layout">
-                    <!-- Lista de estudiantes -->
-                    <div class="admin-panel-card">
-                        <div class="admin-panel-card-header">
-                            <h3>Estudiantes Registrados</h3>
-                            <span class="admin-badge admin-badge-indigo" id="students-count-badge">0 Alumnos</span>
-                        </div>
-                        <div class="admin-table-container">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>Estudiante</th>
-                                        <th>Nivel</th>
-                                        <th>Experiencia</th>
-                                        <th>Progreso</th>
-                                        <th>Tema Actual</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-students-tbody">
-                                    <!-- Renderizado Dinámico -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Formulario de Configuración -->
-                    <div class="admin-panel-card">
-                        <div class="admin-panel-card-header">
-                            <h3>Configuración del Alumno</h3>
-                        </div>
-                        <div class="admin-form-container" id="admin-form-container">
-                            ${createAdminEmptyState()}
-                        </div>
-                    </div>
+                <div id="admin-tab-content">
+                    ${adminActiveTab === 'students' ? createStudentsView() : createAdminSyllabusView()}
                 </div>
             </main>
         </div>
     `;
+}
+
+function switchAdminTab(tab) {
+    if (adminActiveTab === tab) return;
+    adminActiveTab = tab;
+    selectedStudent = null;
+    renderAdminDashboard();
+}
+
+function createStudentsView() {
+    return `
+        <div class="admin-welcome-section" style="margin-bottom: 2rem;">
+            <div class="admin-welcome-title">
+                <h2>Gestión de Estudiantes</h2>
+                <p>Monitorea y configura en tiempo real el progreso de los alumnos en la base de datos.</p>
+            </div>
+        </div>
+
+        <div class="admin-grid-layout">
+            <!-- Lista de estudiantes -->
+            <div class="admin-panel-card">
+                <div class="admin-panel-card-header">
+                    <h3>Estudiantes Registrados</h3>
+                    <span class="admin-badge admin-badge-indigo" id="students-count-badge">0 Alumnos</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th>Nivel</th>
+                                <th>Experiencia</th>
+                                <th>Progreso</th>
+                                <th>Tema Actual</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-students-tbody">
+                            <!-- Renderizado Dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Formulario de Configuración -->
+            <div class="admin-panel-card">
+                <div class="admin-panel-card-header">
+                    <h3>Configuración del Alumno</h3>
+                </div>
+                <div class="admin-form-container" id="admin-form-container">
+                    ${createAdminEmptyState()}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createAdminSyllabusView() {
+    return `
+        <div class="admin-welcome-section" style="margin-bottom: 2rem;">
+            <div class="admin-welcome-title">
+                <h2>Carga de Sílabos y Retos de Aprendizaje</h2>
+                <p>Sube el sílabo oficial del curso para que el agente Dify lo use como conocimiento y genere retos de programación.</p>
+            </div>
+        </div>
+
+        <div class="admin-grid-layout" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+            <!-- Formulario de Carga -->
+            <div class="admin-panel-card" style="padding: 1.5rem; background: white; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <div class="admin-panel-card-header" style="margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b;">Subir Sílabo</h3>
+                </div>
+
+                <div id="syllabus-alert-container"></div>
+
+                <form id="syllabus-upload-form" onsubmit="handleSyllabusSubmit(event)">
+                    <div class="login-form-group" style="margin-bottom: 1.25rem;">
+                        <label class="admin-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #475569; font-size: 0.875rem;">Seleccionar archivo (PDF o Word)</label>
+                        <input type="file" id="syllabus-file" accept=".pdf,.docx" required style="width: 100%; padding: 0.75rem; border: 2px dashed #cbd5e1; border-radius: 0.5rem; background: #f8fafc; font-size: 0.875rem;" />
+                    </div>
+
+                    <div class="login-form-group" style="margin-bottom: 1.5rem;">
+                        <label class="admin-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #475569; font-size: 0.875rem;">Cantidad de Ejercicios a Generar</label>
+                        <input type="number" id="syllabus-qty" min="1" max="10" value="3" required style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.875rem; background: #ffffff;" />
+                    </div>
+
+                    <button type="submit" class="admin-btn-save" id="syllabus-upload-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.95rem; font-weight: 700; border-radius: 0.5rem; background: linear-gradient(to right, #4f46e5, #7c3aed); border: none; color: white; cursor: pointer; transition: all 0.2s;">
+                        ${Icons.zap}
+                        <span>Subir y Analizar Sílabo</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Listado de Ejercicios Generados -->
+            <div class="admin-panel-card" style="padding: 1.5rem; background: white; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <div class="admin-panel-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b;">Retos Propuestos Pendientes</h3>
+                    <span class="admin-badge admin-badge-indigo" id="pending-exercises-badge">0 Pendientes</span>
+                </div>
+
+                <div id="admin-exercises-container" style="display: flex; flex-direction: column; gap: 1.25rem; max-height: 500px; overflow-y: auto; padding-right: 0.5rem;">
+                    ${createExercisesEmptyState()}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createExercisesEmptyState() {
+    return `
+        <div class="admin-empty-state" style="text-align: center; padding: 3rem 1rem; color: #64748b;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #94a3b8;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <p style="font-weight: 600; margin-bottom: 0.25rem;">No hay retos sugeridos pendientes</p>
+            <p style="font-size: 0.85rem; color: #94a3b8;">Sube un archivo para que el agente extraiga la información del sílabo.</p>
+        </div>
+    `;
+}
+
+function renderPendingExercisesList() {
+    return adminPendingExercises.map(ex => `
+        <div class="exercise-card" style="border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; background: #f8fafc;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+                <h4 style="font-weight: 700; color: #1e293b; font-size: 1.05rem; margin: 0;">${ex.titulo}</h4>
+                <div style="display: flex; gap: 0.5rem;">
+                    <span class="admin-badge admin-badge-indigo" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">${ex.tema}</span>
+                    <span class="admin-badge admin-badge-amber" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">${ex.dificultad}</span>
+                </div>
+            </div>
+            <p style="font-size: 0.875rem; color: #475569; margin: 0 0 1.25rem 0; line-height: 1.4;">${ex.descripcion}</p>
+            
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 0.75rem;">
+                <button onclick="approveExercise(${ex.id})" style="display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem 1rem; background: #10b981; color: white; border: none; border-radius: 0.375rem; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: background 0.2s;">
+                    Aprobar Reto
+                </button>
+                <button onclick="deleteExercise(${ex.id})" style="display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 0.375rem; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: background 0.2s;">
+                    Descartar
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function fetchPendingExercises() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/exercises/pending`);
+        if (!response.ok) throw new Error('Error al obtener ejercicios pendientes');
+        adminPendingExercises = await response.json();
+
+        const badge = document.getElementById('pending-exercises-badge');
+        if (badge) badge.innerText = `${adminPendingExercises.length} Pendientes`;
+
+        const container = document.getElementById('admin-exercises-container');
+        if (container) {
+            container.innerHTML = adminPendingExercises.length === 0 ? createExercisesEmptyState() : renderPendingExercisesList();
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function handleSyllabusSubmit(event) {
+    event.preventDefault();
+    const alertContainer = document.getElementById('syllabus-alert-container');
+    const uploadBtn = document.getElementById('syllabus-upload-btn');
+    const fileInput = document.getElementById('syllabus-file');
+    const qtyInput = document.getElementById('syllabus-qty');
+
+    if (!fileInput.files || fileInput.files.length === 0) return;
+
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('cantidad', qtyInput ? qtyInput.value : '3');
+
+    alertContainer.innerHTML = '';
+    uploadBtn.disabled = true;
+    uploadBtn.style.opacity = '0.7';
+    uploadBtn.querySelector('span').innerText = 'Subiendo y analizando con Dify...';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/upload-syllabus`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error en el servidor al procesar el sílabo');
+
+        alertContainer.innerHTML = `
+            <div class="login-success-msg" style="margin-bottom: 1.25rem;">
+                ${Icons.award}
+                <span>¡Sílabo subido y retos generados con éxito!</span>
+            </div>
+        `;
+
+        fileInput.value = '';
+        await fetchPendingExercises();
+
+    } catch (error) {
+        console.error(error);
+        alertContainer.innerHTML = `
+            <div class="login-error-msg" style="margin-bottom: 1.25rem;">
+                ${Icons.zap}
+                <span>Error: ${error.message}</span>
+            </div>
+        `;
+    } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.style.opacity = '1';
+        uploadBtn.querySelector('span').innerText = 'Subir y Analizar Sílabo';
+    }
+}
+
+async function approveExercise(id) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/exercises/${id}/approve`, {
+            method: 'PUT'
+        });
+        if (!response.ok) throw new Error('No se pudo aprobar el reto');
+        if (typeof topicExerciseCounts !== 'undefined') {
+            topicExerciseCounts = null;
+        }
+        await fetchPendingExercises();
+    } catch (error) {
+        console.error(error);
+        alert('Error al aprobar: ' + error.message);
+    }
+}
+
+async function deleteExercise(id) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/exercises/${id}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) throw new Error('No se pudo descartar el reto');
+        if (typeof topicExerciseCounts !== 'undefined') {
+            topicExerciseCounts = null;
+        }
+        await fetchPendingExercises();
+    } catch (error) {
+        console.error(error);
+        alert('Error al descartar: ' + error.message);
+    }
 }
 
 function createAdminEmptyState() {
@@ -152,7 +372,8 @@ async function fetchAdminStudents() {
 
         adminStudentsList = await response.json();
 
-        document.getElementById('students-count-badge').innerText = `${adminStudentsList.length} Alumnos`;
+        const countBadge = document.getElementById('students-count-badge');
+        if (countBadge) countBadge.innerText = `${adminStudentsList.length} Alumnos`;
 
         renderStudentsTable();
     } catch (error) {
@@ -162,6 +383,7 @@ async function fetchAdminStudents() {
 
 function renderStudentsTable() {
     const tbody = document.getElementById('admin-students-tbody');
+    if (!tbody) return;
     tbody.innerHTML = adminStudentsList.map(student => {
         const isSelected = selectedStudent && selectedStudent.usuario_id === student.usuario_id;
 
@@ -202,11 +424,14 @@ function selectStudent(studentId) {
     renderStudentsTable();
 
     const formContainer = document.getElementById('admin-form-container');
-    formContainer.innerHTML = createAdminEditForm(selectedStudent);
+    if (formContainer) {
+        formContainer.innerHTML = createAdminEditForm(selectedStudent);
+    }
 }
 
 async function saveStudentChanges(studentId) {
     const alertDiv = document.getElementById('admin-edit-alert');
+    if (!alertDiv) return;
     alertDiv.innerHTML = '';
 
     const nombre = document.getElementById('edit-nombre').value.trim();
@@ -267,5 +492,9 @@ function handleAdminLogout() {
 function renderAdminDashboard() {
     const appContainer = document.getElementById('app');
     appContainer.innerHTML = createAdminDashboard();
-    fetchAdminStudents();
+    if (adminActiveTab === 'students') {
+        fetchAdminStudents();
+    } else {
+        fetchPendingExercises();
+    }
 }

@@ -1,4 +1,3 @@
-// Componente Chat Message
 function createChatMessage(message) {
     const { type, text } = message;
     const isAI = type === 'ai';

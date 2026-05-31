@@ -1,4 +1,4 @@
-const allTopicsList = [
+const canonicalTopics = [
     'Variables',
     'Tipos de Datos',
     'Operadores',
@@ -10,16 +10,19 @@ const allTopicsList = [
     'Objetos'
 ];
 
+let allTopicsList = [...canonicalTopics];
+let topicExerciseCounts = null;
+
 function getDynamicTopics() {
-    const currentIndex = allTopicsList.indexOf(AppState.currentTopic);
+    const progressIndex = allTopicsList.indexOf(AppState.tema_actual);
 
     return allTopicsList.map((title, idx) => {
         let state = 'locked';
-        if (idx < currentIndex) {
+        if (idx < progressIndex) {
             state = 'mastered';
-        } else if (idx === currentIndex) {
+        } else if (idx === progressIndex) {
             state = 'current';
-        } else if (idx === currentIndex + 1) {
+        } else if (idx === progressIndex + 1) {
             state = 'available';
         }
 
@@ -32,31 +35,42 @@ function getDynamicTopics() {
 }
 
 function createCircularProgress(percentage) {
-    const radius = 47.5;
+    const radius = 28;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percentage / 100) * circumference;
 
     return `
-        <div class="circular-progress">
-            <svg width="100" height="100" class="progress-ring">
+        <div class="circular-progress" style="width: 70px; height: 70px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="70" height="70" style="transform: rotate(-90deg);">
                 <circle
-                    class="progress-ring-circle"
-                    cx="50"
-                    cy="50"
+                    cx="35"
+                    cy="35"
                     r="${radius}"
+                    stroke="#e2e8f0"
+                    stroke-width="5"
+                    fill="transparent"
                 />
                 <circle
-                    class="progress-ring-circle-fill"
-                    cx="50"
-                    cy="50"
+                    cx="35"
+                    cy="35"
                     r="${radius}"
+                    stroke="url(#progress-gradient)"
+                    stroke-width="5"
                     stroke-dasharray="${circumference}"
                     stroke-dashoffset="${offset}"
+                    stroke-linecap="round"
+                    fill="transparent"
                 />
+                <defs>
+                    <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#6366f1" />
+                        <stop offset="100%" stop-color="#a855f7" />
+                    </linearGradient>
+                </defs>
             </svg>
-            <div class="progress-text">
-                <div class="progress-percentage">${percentage}%</div>
-                <div class="progress-label">Completado</div>
+            <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;">
+                <span style="font-size: 0.9rem; font-weight: 800; color: #1f2937;">${percentage}%</span>
+                <span style="font-size: 0.45rem; color: #6b7280; margin-top: 1px; font-weight: 600; text-transform: uppercase;">Progreso</span>
             </div>
         </div>
     `;
@@ -64,81 +78,20 @@ function createCircularProgress(percentage) {
 
 function createLearningMap() {
     const activeTopics = getDynamicTopics();
-    const masteredCount = activeTopics.filter(t => t.state === 'mastered').length;
-    const totalCount = activeTopics.length;
-
-    const nextLevelXP = AppState.userLevel * 1000;
-    const currentLevelBaseXP = (AppState.userLevel - 1) * 1000;
-    const xpProgressInLevel = Math.max(0, AppState.totalXP - currentLevelBaseXP);
-    const xpPercent = Math.min(100, Math.floor((xpProgressInLevel / 1000) * 100));
 
     return `
-        <div class="progress-header">
-            <div class="progress-title">
-                ${Icons.trendingUp}
-                <span>Tu Progreso</span>
-            </div>
-
-            <div class="progress-card">
-                ${createCircularProgress(AppState.porcentaje)}
-
-                <div class="progress-stats">
-                    <div class="stat-row">
-                        <span class="stat-label">Temas Dominados</span>
-                        <span class="stat-value" style="color: #10b981;">${masteredCount} / ${totalCount}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Racha Actual</span>
-                        <div style="display: flex; align-items: center; gap: 0.25rem;">
-                            ${Icons.award}
-                            <span class="stat-value" style="color: #d97706;">1 día</span>
+        <div class="skill-tree-container" style="margin-top: 0;">
+            <h3 class="skill-tree-title" style="margin-top: 0; padding-top: 0;">Ruta de Aprendizaje</h3>
+            <div class="skill-tree" style="${activeTopics.length === 0 ? 'display: block; text-align: center;' : ''}">
+                ${activeTopics.length === 0 ? `
+                    <div style="padding: 2.5rem 1rem; color: #64748b; font-size: 0.85rem; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 1rem; margin-top: 1rem;">
+                        <div style="color: #6366f1; margin-bottom: 0.5rem;">
+                            ${Icons.sparkles}
                         </div>
+                        <p style="font-weight: 700; margin: 0 0 0.25rem 0; color: #1e293b;">No hay retos disponibles</p>
+                        <p style="color: #64748b; font-size: 0.8rem; margin: 0;">Actualmente no se han asignado retos de programación. Vuelve a consultar más tarde.</p>
                     </div>
-                </div>
-            </div>
-            </div>
-
-            <div class="gamification-stats" style="margin-top: 1rem;">
-                <div class="stats-card" style="background: white; border-radius: 1rem; padding: 1.25rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); border: 1px solid #e0e7ff;">
-                    <div class="xp-progress-header" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
-                        <div class="xp-label" style="display: flex; gap: 0.5rem; align-items: center; color: #1f2937; font-weight: 600;">
-                            ${Icons.target}
-                            <span>Nivel ${AppState.userLevel}</span>
-                        </div>
-                        <div class="xp-value" style="color: #6366f1; font-weight: 700;">${AppState.totalXP} XP</div>
-                    </div>
-                    <div class="progress-bar" style="height: 8px; background: #e0e7ff; border-radius: 4px; overflow: hidden; margin-bottom: 1rem;">
-                        <div class="progress-fill" style="width: ${AppState.porcentaje}%; height: 100%; background: linear-gradient(to right, #6366f1, #a855f7); border-radius: 4px;"></div>
-                    </div>
-
-                    <div class="stat-items" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <div class="stat-item" style="display: flex; justify-content: space-between; font-size: 0.75rem;">
-                            <div class="stat-item-label" style="display: flex; gap: 0.5rem; color: #6b7280; align-items: center;">
-                                <div class="stat-icon icon-amber" style="color: #d97706;">
-                                    ${Icons.lightbulb}
-                                </div>
-                                <span>Pistas Usadas</span>
-                            </div>
-                            <div class="stat-item-value value-amber" style="color: #d97706; font-weight: 600;">0 / 5</div>
-                        </div>
-                        <div class="stat-item" style="display: flex; justify-content: space-between; font-size: 0.75rem;">
-                            <div class="stat-item-label" style="display: flex; gap: 0.5rem; color: #6b7280; align-items: center;">
-                                <div class="stat-icon icon-emerald" style="color: #10b981;">
-                                    ${Icons.zap}
-                                </div>
-                                <span>Bonus de Velocidad</span>
-                            </div>
-                            <div class="stat-item-value value-emerald" style="color: #10b981; font-weight: 600;">+0 XP</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="skill-tree-container">
-            <h3 class="skill-tree-title">Ruta de Aprendizaje</h3>
-            <div class="skill-tree">
-                ${activeTopics.map((topic, index) => `
+                ` : activeTopics.map((topic, index) => `
                     <div class="skill-node-wrapper">
                         ${createSkillNode(topic)}
                         ${index < activeTopics.length - 1 ? `
@@ -153,15 +106,70 @@ function createLearningMap() {
 
 function renderLearningMap() {
     const mapElement = document.getElementById('learning-map');
+    if (!mapElement) return;
+
+    if (topicExerciseCounts === null) {
+        mapElement.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: #64748b; font-size: 0.875rem;">
+                <span class="pulse-animation">Cargando ruta de aprendizaje...</span>
+            </div>
+        `;
+
+        fetch(`${API_BASE_URL}/api/exercises-counts`)
+            .then(res => {
+                if (!res.ok) throw new Error('Error al obtener conteos');
+                return res.json();
+            })
+            .then(data => {
+                topicExerciseCounts = data;
+
+                const activeTopicsFromDb = Object.keys(data).filter(topic => data[topic] > 0);
+
+                if (activeTopicsFromDb.length > 0) {
+                    allTopicsList = canonicalTopics.filter(topic => activeTopicsFromDb.includes(topic));
+                    if (!allTopicsList.includes(AppState.currentTopic)) {
+                        const oldTopic = AppState.currentTopic;
+                        AppState.currentTopic = allTopicsList[0];
+                        if (AppState.currentTopic !== oldTopic && typeof loadExercisesForTopic === 'function') {
+                            loadExercisesForTopic(AppState.currentTopic);
+                        }
+                    }
+                } else {
+                    allTopicsList = [];
+                    AppState.currentTopic = null;
+                }
+
+                renderLearningMap();
+            })
+            .catch(e => {
+                console.error('Error al cargar conteos de temas:', e);
+                topicExerciseCounts = {};
+                allTopicsList = [];
+                AppState.currentTopic = null;
+                renderLearningMap();
+            });
+        return;
+    }
+
     mapElement.innerHTML = createLearningMap();
 
     const activeTopics = getDynamicTopics();
 
     const nodes = mapElement.querySelectorAll('.node-icon');
     nodes.forEach((node, index) => {
-        if (activeTopics[index].state !== 'locked') {
-            node.addEventListener('click', () => handleNodeClick(activeTopics[index].id));
+        if (activeTopics[index]) {
+            const topicState = activeTopics[index].state;
+            if (topicState === 'mastered' || topicState === 'current') {
+                node.addEventListener('click', () => handleNodeClick(activeTopics[index].id));
+            }
+        }
+    });
+
+    activeTopics.forEach(topic => {
+        const count = topicExerciseCounts[topic.title] || 0;
+        const badge = mapElement.querySelector(`[data-topic-id="${topic.id}"] .retos-count-badge`);
+        if (badge) {
+            badge.innerText = `${count} retos`;
         }
     });
 }
-

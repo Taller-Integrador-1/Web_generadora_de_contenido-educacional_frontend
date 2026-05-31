@@ -156,6 +156,7 @@ body {
 /* ==================== LEARNING MAP SIDEBAR ==================== */
 .learning-map-sidebar {
     width: 288px;
+    flex-shrink: 0;
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     background: linear-gradient(to bottom, #f8fafc, rgba(99, 102, 241, 0.05));
     display: flex;
@@ -316,6 +317,11 @@ body {
     font-size: 0.875rem;
     transition: all 0.3s ease;
     position: relative;
+}
+
+.node-selected {
+    box-shadow: 0 0 0 4px #818cf8, 0 10px 25px rgba(99, 102, 241, 0.3) !important;
+    transform: scale(1.08);
 }
 
 .node-locked {
@@ -626,6 +632,7 @@ body {
     width: var(--tutor-width, 420px);
     min-width: 300px;
     max-width: 600px;
+    flex-shrink: 0;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     background: linear-gradient(to bottom, white, rgba(99, 102, 241, 0.03));
     display: flex;
@@ -1597,4 +1604,61 @@ body {
     80% {
         transform: translateX(6px);
     }
+}
+
+/* ==================== STATS DASHBOARD & PROFILE ==================== */
+.stats-dashboard-container {
+    animation: fadeIn 0.4s ease-out;
+}
+
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.04) !important;
+}
+
+.profile-card-premium {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.25) !important;
+}
+
+.chart-card, .profile-edit-card {
+    transition: transform 0.2s ease;
+}
+
+.header-nav .nav-tab {
+    position: relative;
+}
+
+.header-nav .nav-tab:hover {
+    background: rgba(99, 102, 241, 0.05) !important;
+    color: #4f46e5 !important;
+}
+
+#btn-save-profile:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99,102,241,0.35) !important;
+}
+
+#btn-save-profile:active {
+    transform: translateY(0);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
 }

@@ -1,31 +1,12 @@
-// Componente Code Editor
 let codeEditorInstance = null;
+let activeExercise = null;
+let currentTopicExercises = [];
 
 const initialSnippets = {
-    python: `# Ejemplo: Corregir el Bucle Infinito
-def contar_hasta_diez():
-    contador = 1
-    while contador < 10:  # ⚠️ Problema aquí
-        print(f"Número: {contador}")
-        # ¿Qué falta para que el bucle termine?
-
-    print("¡Completado!")
-
-contar_hasta_diez()`,
-    java: `import java.io.*;
-// Ejemplo: Corregir el Bucle Infinito
-public class Main {
-    public static void main(String[] args) throws Exception {
-        System.setOut(new PrintStream(System.out, true, "UTF-8"));
-        int contador = 1;
-        while (contador < 10) { // Problema: falta incrementar contador
-            System.out.println("N\u00famero: " + contador);
-            // \u00bfQue falta para que el bucle termine?
-            // contador++;
-        }
-        System.out.println("\u00a1Completado!");
-    }
-}`
+    python: `# Sube un sílabo en el panel de administración para comenzar
+# o selecciona un tema desbloqueado de la ruta de aprendizaje.`,
+    java: `// Sube un sílabo en el panel de administración para comenzar
+// o selecciona un tema desbloqueado de la ruta de aprendizaje.`
 };
 
 function createCodeEditor() {
@@ -36,20 +17,25 @@ function createCodeEditor() {
                     ${Icons.fileCode}
                 </div>
                 <div class="editor-title">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <h3>Reto actual: Corregir el Bucle Infinito</h3>
-                        <span class="difficulty-badge">Dificultad: Media</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <h3 id="current-reto-title">Sin retos activos</h3>
+                        <span class="difficulty-badge" id="current-reto-difficulty">Dificultad: -</span>
                     </div>
-                    <div class="editor-meta">
+                    <div class="editor-meta" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
                         <div style="display: flex; align-items: center; gap: 0.25rem;">
                             ${Icons.clock}
                             <span>Tiempo estimado: 10 min</span>
                         </div>
                         <div class="meta-separator"></div>
-                        <select id="language-selector" onchange="changeLanguage()" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 5px; font-size: 0.75rem;">
+                        <select id="language-selector" onchange="changeLanguage()" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 5px; font-size: 0.75rem; cursor: pointer;">
                             <option value="python" style="color: black;">Python</option>
                             <option value="java" style="color: black;">Java</option>
                         </select>
+                        <div id="exercise-select-wrapper" style="margin-left: 0.5rem; display: none;">
+                            <select id="exercise-selector" onchange="selectExercise(this.value)" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 5px; font-size: 0.75rem; cursor: pointer;">
+                                <!-- Cargado dinámicamente -->
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -59,10 +45,31 @@ function createCodeEditor() {
                     ${Icons.play}
                     <span>Ejecutar Código</span>
                 </button>
+                <button class="btn-validate" id="btn-validate-ia" onclick="validateCodeWithIA()" style="display: none; background: linear-gradient(to right, #6366f1, #a855f7); color: white; border: none; padding: 0.5rem 1.25rem; border-radius: 0.375rem; font-weight: 700; cursor: pointer; align-items: center; justify-content: center; gap: 0.35rem; transition: transform 0.2s;">
+                    ${Icons.sparkles}
+                    <span>Validar con IA</span>
+                </button>
                 <button class="btn-reset" onclick="resetCode()">
                     ${Icons.rotateCcw}
                     <span>Reiniciar</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- Caja de Descripción del Reto -->
+        <div class="reto-description-box" id="current-reto-description-box" style="margin: 1rem 1rem 0 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 0.75rem; color: #e2e8f0; font-size: 0.85rem; line-height: 1.5; display: none;">
+            <div style="font-weight: 700; color: #a855f7; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                ${Icons.lightbulb}
+                <span>Descripción del Reto</span>
+            </div>
+            <p id="current-reto-description" style="margin: 0; color: #cbd5e1; font-weight: 400; white-space: pre-wrap;"></p>
+            
+            <div id="current-reto-casos-prueba-section" style="margin-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.5rem; display: none;">
+                <div style="font-weight: 700; color: #6366f1; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem;">
+                    ${Icons.target}
+                    <span>Casos de Prueba de Validación</span>
+                </div>
+                <div id="current-reto-casos-prueba" style="margin: 0; font-family: monospace; font-size: 0.75rem; color: #94a3b8; line-height: 1.4;"></div>
             </div>
         </div>
 
@@ -95,9 +102,10 @@ function createCodeEditor() {
 
 function renderCodeEditor() {
     const editorElement = document.getElementById('code-editor');
-    editorElement.innerHTML = createCodeEditor();
-
-    setTimeout(initCodeEditor, 0);
+    if (editorElement) {
+        editorElement.innerHTML = createCodeEditor();
+        setTimeout(initCodeEditor, 0);
+    }
 }
 
 function initCodeEditor() {
@@ -113,6 +121,215 @@ function initCodeEditor() {
         matchBrackets: true,
         autoCloseBrackets: true
     });
+
+    if (AppState.currentTopic) {
+        loadExercisesForTopic(AppState.currentTopic);
+    } else {
+        loadExercisesForTopic(null);
+    }
+}
+
+async function loadExercisesForTopic(topicTitle) {
+    if (!topicTitle) {
+        activeExercise = null;
+        removeExerciseSelector();
+
+        const titleElem = document.getElementById('current-reto-title');
+        if (titleElem) titleElem.innerText = `Sin retos activos`;
+
+        const diffElem = document.getElementById('current-reto-difficulty');
+        if (diffElem) diffElem.innerText = `Dificultad: -`;
+
+        const descBox = document.getElementById('current-reto-description-box');
+        if (descBox) descBox.style.display = 'none';
+
+        const validateBtn = document.getElementById('btn-validate-ia');
+        if (validateBtn) {
+            validateBtn.style.display = 'none';
+        }
+
+        resetCode();
+        return;
+    }
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/exercises/${encodeURIComponent(topicTitle)}`);
+        if (!response.ok) throw new Error('Error al obtener retos del tema');
+        currentTopicExercises = await response.json();
+
+        if (currentTopicExercises && currentTopicExercises.length > 0) {
+            const isCurrentTopic = AppState.currentTopic === AppState.tema_actual;
+            let activeIdx = 0;
+            if (isCurrentTopic) {
+                activeIdx = currentTopicExercises.findIndex(ex => !ex.resuelto);
+                if (activeIdx === -1) {
+                    activeIdx = currentTopicExercises.length - 1;
+                }
+            }
+
+            loadChallenge(currentTopicExercises[activeIdx]);
+            addExerciseSelector(currentTopicExercises);
+
+            const selector = document.getElementById('exercise-selector');
+            if (selector) {
+                selector.value = activeIdx;
+            }
+        } else {
+            activeExercise = null;
+            removeExerciseSelector();
+
+            const titleElem = document.getElementById('current-reto-title');
+            if (titleElem) titleElem.innerText = `Sin retos activos`;
+
+            const diffElem = document.getElementById('current-reto-difficulty');
+            if (diffElem) diffElem.innerText = `Dificultad: -`;
+
+            const descBox = document.getElementById('current-reto-description-box');
+            const casesSection = document.getElementById('current-reto-casos-prueba-section');
+            if (descBox) descBox.style.display = 'none';
+            if (casesSection) casesSection.style.display = 'none';
+
+            const validateBtn = document.getElementById('btn-validate-ia');
+            if (validateBtn) {
+                validateBtn.style.display = 'none';
+            }
+
+            resetCode();
+        }
+    } catch (error) {
+        console.error('Error al cargar retos:', error);
+    }
+}
+
+function loadChallenge(exercise) {
+    activeExercise = exercise;
+
+    const titleElem = document.getElementById('current-reto-title');
+    if (titleElem) titleElem.innerText = `Reto: ${exercise.titulo}`;
+
+    const diffElem = document.getElementById('current-reto-difficulty');
+    if (diffElem) diffElem.innerText = `Dificultad: ${exercise.dificultad}`;
+
+    const validateBtn = document.getElementById('btn-validate-ia');
+    if (validateBtn) {
+        validateBtn.style.display = 'inline-flex';
+    }
+
+    const descBox = document.getElementById('current-reto-description-box');
+    const descElem = document.getElementById('current-reto-description');
+    const casesSection = document.getElementById('current-reto-casos-prueba-section');
+    const casesElem = document.getElementById('current-reto-casos-prueba');
+
+    if (descBox && descElem && exercise.descripcion) {
+        descElem.innerText = exercise.descripcion;
+        descBox.style.display = 'block';
+
+        if (casesSection && casesElem) {
+            if (exercise.casos_prueba) {
+                try {
+                    let cases = exercise.casos_prueba;
+                    if (typeof cases === 'string') {
+                        try {
+                            cases = JSON.parse(cases);
+                        } catch (e) {
+                        }
+                    }
+
+                    if (Array.isArray(cases) && cases.length > 0) {
+                        const formattedCases = cases.map((c, i) => {
+                            let inpStr = "";
+                            if (typeof c.input === 'object' && c.input !== null) {
+                                inpStr = Object.entries(c.input).map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join(', ');
+                            } else {
+                                inpStr = JSON.stringify(c.input);
+                            }
+                            return `Caso ${i + 1}: Entrada (${inpStr}) → Salida Esperada: ${JSON.stringify(c.output)}`;
+                        }).join('<br>');
+
+                        casesElem.innerHTML = formattedCases;
+                        casesSection.style.display = 'block';
+                    } else if (typeof cases === 'string' && cases.trim() !== "" && cases !== "Ejecutar y validar la salida del programa.") {
+                        casesElem.innerText = cases;
+                        casesSection.style.display = 'block';
+                    } else {
+                        casesSection.style.display = 'none';
+                    }
+                } catch (err) {
+                    console.error("Error al formatear casos de prueba:", err);
+                    casesSection.style.display = 'none';
+                }
+            } else {
+                casesSection.style.display = 'none';
+            }
+        }
+    } else if (descBox) {
+        descBox.style.display = 'none';
+    }
+
+    const lang = document.getElementById('language-selector').value;
+    if (codeEditorInstance) {
+        const code = lang === 'python'
+            ? (exercise.codigo_inicial_python || '# Escribe tu código aquí')
+            : (exercise.codigo_inicial_java || '// Escribe tu código aquí');
+
+        codeEditorInstance.setValue(code);
+
+        if (lang === 'java') {
+            codeEditorInstance.setOption('mode', 'text/x-java');
+        } else {
+            codeEditorInstance.setOption('mode', 'python');
+        }
+    }
+}
+
+function addExerciseSelector(exercises) {
+    const wrapper = document.getElementById('exercise-select-wrapper');
+    const selector = document.getElementById('exercise-selector');
+
+    if (wrapper && selector) {
+        const isCurrentTopic = AppState.currentTopic === AppState.tema_actual;
+
+        selector.innerHTML = exercises.map((ex, idx) => {
+            let isLocked = false;
+            if (isCurrentTopic && idx > 0) {
+                isLocked = !exercises[idx - 1].resuelto;
+            }
+            const disabledAttr = isLocked ? 'disabled' : '';
+            const lockIcon = isLocked ? ' 🔒 (Bloqueado)' : '';
+            return `
+                <option value="${idx}" ${disabledAttr} style="color: ${isLocked ? '#9ca3af' : 'black'};">
+                    Reto ${idx + 1}: ${ex.titulo}${lockIcon}
+                </option>
+            `;
+        }).join('');
+        wrapper.style.display = 'inline-block';
+    }
+}
+
+function removeExerciseSelector() {
+    const wrapper = document.getElementById('exercise-select-wrapper');
+    if (wrapper) {
+        wrapper.style.display = 'none';
+    }
+}
+
+function selectExercise(index) {
+    const idx = parseInt(index);
+    if (currentTopicExercises && currentTopicExercises[idx]) {
+        const isCurrentTopic = AppState.currentTopic === AppState.tema_actual;
+        if (isCurrentTopic && idx > 0) {
+            const isLocked = !currentTopicExercises[idx - 1].resuelto;
+            if (isLocked) {
+                alert("Debes completar y aprobar los retos anteriores primero.");
+                const selector = document.getElementById('exercise-selector');
+                if (selector) {
+                    const activeIdx = currentTopicExercises.indexOf(activeExercise);
+                    selector.value = activeIdx >= 0 ? activeIdx : 0;
+                }
+                return;
+            }
+        }
+        loadChallenge(currentTopicExercises[idx]);
+    }
 }
 
 function changeLanguage() {
@@ -120,7 +337,17 @@ function changeLanguage() {
     const lang = selector.value;
 
     if (codeEditorInstance) {
-        codeEditorInstance.setValue(initialSnippets[lang]);
+        if (activeExercise) {
+            const code = lang === 'python'
+                ? (activeExercise.codigo_inicial_python || '# Escribe tu código aquí')
+                : (activeExercise.codigo_inicial_java || '// Escribe tu código aquí');
+
+            codeEditorInstance.setValue(code);
+        } else {
+            const code = initialSnippets[lang] || "";
+            codeEditorInstance.setValue(code);
+        }
+
         if (lang === 'java') {
             codeEditorInstance.setOption('mode', 'text/x-java');
         } else {
@@ -138,7 +365,7 @@ async function executeCode() {
 
     consoleContainer.innerHTML = `
         <div class="console-line normal">
-            <span>Ejecutando código en los servidores de Piston...</span>
+            <span>Ejecutando código en los servidores...</span>
         </div>
     `;
 
@@ -175,7 +402,7 @@ async function executeCode() {
         });
 
         if (response.status === 401) {
-            throw new Error("Piston API requiere autorización (401 Unauthorized). Revisa las pautas.");
+            throw new Error("API requiere autorización.");
         }
 
         const data = await response.json();
@@ -216,7 +443,7 @@ async function executeCode() {
             consoleContainer.innerHTML = `
                 <div class="console-line error">
                     ${Icons.alertCircle}
-                    <span>Error al procesar la respuesta del servidor de compilación.</span>
+                    <span>Error al procesar la respuesta del servidor.</span>
                 </div>
             `;
         }
@@ -235,13 +462,199 @@ async function executeCode() {
 function resetCode() {
     const lang = document.getElementById('language-selector').value;
     if (codeEditorInstance) {
-        codeEditorInstance.setValue(initialSnippets[lang]);
+        if (activeExercise) {
+            const code = lang === 'python'
+                ? (activeExercise.codigo_inicial_python || '# Escribe tu código aquí')
+                : (activeExercise.codigo_inicial_java || '// Escribe tu código aquí');
+
+            codeEditorInstance.setValue(code);
+        } else {
+            const code = initialSnippets[lang] || "";
+            codeEditorInstance.setValue(code);
+        }
 
         const consoleContainer = document.getElementById('console-output-lines');
+        if (consoleContainer) {
+            consoleContainer.innerHTML = `
+                <div class="console-line normal">
+                    <span>Código reiniciado.</span>
+                </div>
+            `;
+        }
+    }
+}
+
+async function validateCodeWithIA() {
+    if (!codeEditorInstance || !activeExercise) return;
+
+    const code = codeEditorInstance.getValue();
+    const lang = document.getElementById('language-selector').value;
+    const consoleContainer = document.getElementById('console-output-lines');
+    const validateBtn = document.getElementById('btn-validate-ia');
+
+    if (validateBtn) {
+        validateBtn.disabled = true;
+        validateBtn.style.opacity = '0.7';
+    }
+
+    consoleContainer.innerHTML = `
+        <div class="console-line normal">
+            <span style="color: #6366f1; font-weight: bold; display: flex; align-items: center; gap: 0.5rem;">
+                ${Icons.play}
+                Paso 1: Ejecutando tu código localmente...
+            </span>
+        </div>
+    `;
+
+    const pistonLang = lang === 'python' ? 'python' : 'java';
+    const pistonVersion = lang === 'python' ? '3.10.0' : '15.0.2';
+
+    try {
+        let codeToSend = code;
+        if (lang === 'java') {
+            codeToSend = codeToSend.replace(/[^\x00-\x7F]/g, (char) => {
+                return '\\u' + char.charCodeAt(0).toString(16).padStart(4, '0');
+            });
+            if (!codeToSend.includes('setOut') && !codeToSend.includes('UTF-8')) {
+                codeToSend = codeToSend.replace(
+                    /public static void main\(String\[\] args\)([^{]*){/,
+                    'public static void main(String[] args) throws Exception {\n        System.setOut(new java.io.PrintStream(System.out, true, "UTF-8"));'
+                );
+            }
+        }
+
+        const runResponse = await fetch(`${API_BASE_URL}/api/execute`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                language: pistonLang,
+                version: pistonVersion,
+                files: [{ name: lang === 'java' ? 'Main.java' : 'main.py', content: codeToSend }]
+            })
+        });
+
+        if (!runResponse.ok) throw new Error("Error al ejecutar el código en el compilador.");
+        const runData = await runResponse.json();
+
+        let consoleOutput = "";
+        let isCompileError = false;
+
+        if (runData.compile && runData.compile.stderr) {
+            consoleOutput = runData.compile.stderr;
+            isCompileError = true;
+        } else if (runData.run) {
+            consoleOutput = runData.run.stdout || runData.run.stderr || "";
+            if (runData.run.code !== 0 && !consoleOutput) {
+                consoleOutput = "[Error de ejecución]";
+            }
+        }
+
+        let formattedOutputLines = consoleOutput.split('\n').filter(l => l.trim() !== '');
         consoleContainer.innerHTML = `
             <div class="console-line normal">
-                <span>Código reiniciado.</span>
+                <span><strong>Salida del programa:</strong></span>
+            </div>
+        ` + (formattedOutputLines.length > 0 ? formattedOutputLines.map(line => `
+            <div class="console-line ${isCompileError ? 'error' : 'normal'}">
+                <span style="white-space: pre-wrap; word-break: break-all;">${line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
+            </div>
+        `).join('') : `
+            <div class="console-line normal">
+                <span>[Ejecución completada sin salida en consola]</span>
+            </div>
+        `);
+
+        if (isCompileError || (runData.run && runData.run.code !== 0)) {
+            consoleContainer.innerHTML += `
+                <div class="console-line error" style="margin-top: 0.5rem; border-top: 1px dashed rgba(239, 68, 68, 0.3); padding-top: 0.5rem;">
+                    ${Icons.alertCircle}
+                    <span><strong>Validación abortada:</strong> Corrige los errores antes de validar con IA.</span>
+                </div>
+            `;
+            if (validateBtn) {
+                validateBtn.disabled = false;
+                validateBtn.style.opacity = '1';
+            }
+            return;
+        }
+
+        consoleContainer.innerHTML += `
+            <div class="console-line normal" style="margin-top: 0.5rem; border-top: 1px dashed rgba(99, 102, 241, 0.3); padding-top: 0.5rem;">
+                <span class="pulse-animation" style="color: #a855f7; font-weight: bold; display: flex; align-items: center; gap: 0.5rem;">
+                    ${Icons.sparkles}
+                    Paso 2: Evaluando código con Dify AI...
+                </span>
             </div>
         `;
+
+        const validateResponse = await fetch(`${API_BASE_URL}/api/exercises/validate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuario_id: AppState.usuario_id || "UPAO-123",
+                ejercicio_id: activeExercise.id,
+                resolucion_codigo: code,
+                resultado_consola: consoleOutput
+            })
+        });
+
+        if (!validateResponse.ok) throw new Error("Error al conectar con la API de validación.");
+        const valResult = await validateResponse.json();
+
+        const feedbackLines = valResult.feedback.split('\n');
+        const valColor = valResult.is_correct ? '#10b981' : '#ef4444';
+        const valIcon = valResult.is_correct ? Icons.award : Icons.alertCircle;
+
+        consoleContainer.innerHTML += `
+            <div class="console-line" style="margin-top: 0.75rem; border-top: 2px solid ${valColor}; padding-top: 0.75rem; color: ${valColor}; font-weight: bold; display: flex; align-items: center; gap: 0.5rem;">
+                ${valIcon}
+                <span>Resultado: ${valResult.is_correct ? 'CORRECTO (¡Reto Superado!)' : 'REVISAR SOLUCIÓN'}</span>
+            </div>
+        ` + feedbackLines.map(line => `
+            <div class="console-line" style="color: ${valResult.is_correct ? '#065f46' : '#991b1b'}; background: ${valResult.is_correct ? '#ecfdf5' : '#fef2f2'}; border-radius: 4px; padding: 4px 8px; margin-top: 0.25rem;">
+                <span style="white-space: pre-wrap; word-break: break-all;">${line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
+            </div>
+        `).join('');
+
+        if (valResult.is_correct && valResult.user_stats) {
+            triggerConfettiEffect();
+
+            const oldTopic = AppState.currentTopic;
+
+            if (typeof reloadStudentStats === 'function') {
+                reloadStudentStats(valResult.user_stats);
+            }
+
+            const newTopic = AppState.currentTopic;
+
+            if (newTopic === oldTopic) {
+                const currentIdx = currentTopicExercises.findIndex(ex => ex.id === activeExercise.id);
+                await loadExercisesForTopic(newTopic);
+
+                if (currentIdx !== -1 && currentIdx + 1 < currentTopicExercises.length) {
+                    selectExercise(currentIdx + 1);
+                    const selector = document.getElementById('exercise-selector');
+                    if (selector) {
+                        selector.value = currentIdx + 1;
+                    }
+                }
+            } else {
+                await loadExercisesForTopic(newTopic);
+            }
+        }
+
+    } catch (error) {
+        console.error("Error during IA validation:", error);
+        consoleContainer.innerHTML += `
+            <div class="console-line error" style="margin-top: 0.5rem; border-top: 1px dashed rgba(239, 68, 68, 0.3); padding-top: 0.5rem;">
+                ${Icons.alertCircle}
+                <span><strong>Error de conexión:</strong> ${error.message}</span>
+            </div>
+        `;
+    } finally {
+        if (validateBtn) {
+            validateBtn.disabled = false;
+            validateBtn.style.opacity = '1';
+        }
     }
 }

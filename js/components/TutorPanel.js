@@ -55,6 +55,32 @@ function createTutorPanel() {
     `;
 }
 
+async function loadChatHistory() {
+    if (!AppState.usuario_id) return;
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/chat/history/${AppState.usuario_id}`);
+        if (!response.ok) throw new Error('No se pudo obtener el historial de chat');
+        
+        const data = await response.json();
+        difyConversationId = data.dify_conversation_id;
+        
+        if (data.mensajes && data.mensajes.length > 0) {
+            chatHistory = data.mensajes.map(m => ({
+                type: m.rol === 'assistant' ? 'ai' : 'user',
+                text: m.contenido
+            }));
+            
+            const chatMessagesContainer = document.getElementById('chat-messages');
+            if (chatMessagesContainer) {
+                chatMessagesContainer.innerHTML = chatHistory.map(msg => createChatMessage(msg)).join('');
+                scrollToBottom();
+            }
+        }
+    } catch (error) {
+        console.error('Error al cargar historial de chat:', error);
+    }
+}
+
 function renderTutorPanel() {
     const panelElement = document.getElementById('tutor-panel');
     panelElement.innerHTML = createTutorPanel();
@@ -62,6 +88,8 @@ function renderTutorPanel() {
     initResizer(panelElement);
     initToggle(panelElement);
     scrollToBottom();
+    
+    loadChatHistory();
 }
 
 function initResizer(panelElement) {
