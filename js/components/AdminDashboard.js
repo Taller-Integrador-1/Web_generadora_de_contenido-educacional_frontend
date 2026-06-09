@@ -20,6 +20,9 @@ function createAdminDashboard() {
                 </div>
 
                 <div class="header-right">
+                    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Cambiar Tema" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: var(--text-secondary); transition: background 0.2s, color 0.2s; padding: 0; margin-right: 0.5rem;" onmouseover="this.style.background='var(--border-light)'" onmouseout="this.style.background='none'">
+                        ${(document.documentElement.getAttribute('data-theme') === 'dark') ? Icons.sun : Icons.moon}
+                    </button>
                     <button class="admin-btn-logout" onclick="handleAdminLogout()">
                         Cerrar Sesión
                         ${Icons.zap}
@@ -27,13 +30,13 @@ function createAdminDashboard() {
                 </div>
             </header>
 
-            <main class="admin-main-content" style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+            <main class="admin-main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto; width: 100%;">
                 <!-- Pestañas de Navegación -->
-                <div class="admin-tabs" style="display: flex; gap: 1.5rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem;">
-                    <button class="admin-tab-btn" onclick="switchAdminTab('students')" style="background: none; border: none; font-size: 1.1rem; font-weight: 600; padding: 0.5rem 1.5rem; cursor: pointer; color: ${adminActiveTab === 'students' ? '#4f46e5' : '#64748b'}; border-bottom: ${adminActiveTab === 'students' ? '4px solid #4f46e5' : 'none'}; outline: none; transition: all 0.2s;">
+                <div class="admin-tabs" style="display: flex; gap: 1.5rem; margin-bottom: 2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.25rem; transition: border-color 0.3s;">
+                    <button class="admin-tab-btn" onclick="switchAdminTab('students')" style="background: none; border: none; font-size: 1.1rem; font-weight: 600; padding: 0.5rem 1.5rem; cursor: pointer; color: ${adminActiveTab === 'students' ? '#4f46e5' : 'var(--text-secondary)'}; border-bottom: ${adminActiveTab === 'students' ? '4px solid #4f46e5' : 'none'}; outline: none; transition: all 0.2s;">
                         Gestión de Estudiantes
                     </button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('syllabus')" style="background: none; border: none; font-size: 1.1rem; font-weight: 600; padding: 0.5rem 1.5rem; cursor: pointer; color: ${adminActiveTab === 'syllabus' ? '#4f46e5' : '#64748b'}; border-bottom: ${adminActiveTab === 'syllabus' ? '4px solid #4f46e5' : 'none'}; outline: none; transition: all 0.2s;">
+                    <button class="admin-tab-btn" onclick="switchAdminTab('syllabus')" style="background: none; border: none; font-size: 1.1rem; font-weight: 600; padding: 0.5rem 1.5rem; cursor: pointer; color: ${adminActiveTab === 'syllabus' ? '#4f46e5' : 'var(--text-secondary)'}; border-bottom: ${adminActiveTab === 'syllabus' ? '4px solid #4f46e5' : 'none'}; outline: none; transition: all 0.2s;">
                         Cargar Sílabo y Ejercicios
                     </button>
                 </div>
@@ -111,22 +114,22 @@ function createAdminSyllabusView() {
 
         <div class="admin-grid-layout" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
             <!-- Formulario de Carga -->
-            <div class="admin-panel-card" style="padding: 1.5rem; background: white; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                <div class="admin-panel-card-header" style="margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b;">Subir Sílabo</h3>
+            <div class="admin-panel-card" style="padding: 1.5rem; background: var(--stats-card-bg); border-radius: 1rem; border: 1px solid var(--stats-card-border); box-shadow: var(--stats-card-shadow); transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;">
+                <div class="admin-panel-card-header" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; transition: border-color 0.3s;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s;">Subir Sílabo</h3>
                 </div>
 
                 <div id="syllabus-alert-container"></div>
 
                 <form id="syllabus-upload-form" onsubmit="handleSyllabusSubmit(event)">
                     <div class="login-form-group" style="margin-bottom: 1.25rem;">
-                        <label class="admin-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #475569; font-size: 0.875rem;">Seleccionar archivo (PDF o Word)</label>
-                        <input type="file" id="syllabus-file" accept=".pdf,.docx" required style="width: 100%; padding: 0.75rem; border: 2px dashed #cbd5e1; border-radius: 0.5rem; background: #f8fafc; font-size: 0.875rem;" />
+                        <label class="admin-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-secondary); font-size: 0.875rem; transition: color 0.3s;">Seleccionar archivo (PDF o Word)</label>
+                        <input type="file" id="syllabus-file" accept=".pdf,.docx" required style="width: 100%; padding: 0.75rem; border: 2px dashed var(--stats-input-border); border-radius: 0.5rem; background: var(--stats-input-disabled-bg); color: var(--stats-input-color); font-size: 0.875rem; transition: all 0.3s;" />
                     </div>
 
                     <div class="login-form-group" style="margin-bottom: 1.5rem;">
-                        <label class="admin-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #475569; font-size: 0.875rem;">Cantidad de Ejercicios a Generar</label>
-                        <input type="number" id="syllabus-qty" min="1" max="10" value="3" required style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.875rem; background: #ffffff;" />
+                        <label class="admin-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-secondary); font-size: 0.875rem; transition: color 0.3s;">Cantidad de Ejercicios a Generar</label>
+                        <input type="number" id="syllabus-qty" min="1" max="10" value="3" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--stats-input-border); border-radius: 0.5rem; font-size: 0.875rem; background: var(--stats-input-bg); color: var(--stats-input-color); transition: all 0.3s;" />
                     </div>
 
                     <button type="submit" class="admin-btn-save" id="syllabus-upload-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.95rem; font-weight: 700; border-radius: 0.5rem; background: linear-gradient(to right, #4f46e5, #7c3aed); border: none; color: white; cursor: pointer; transition: all 0.2s;">
@@ -137,9 +140,9 @@ function createAdminSyllabusView() {
             </div>
 
             <!-- Listado de Ejercicios Generados -->
-            <div class="admin-panel-card" style="padding: 1.5rem; background: white; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                <div class="admin-panel-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
-                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b;">Retos Propuestos Pendientes</h3>
+            <div class="admin-panel-card" style="padding: 1.5rem; background: var(--stats-card-bg); border-radius: 1rem; border: 1px solid var(--stats-card-border); box-shadow: var(--stats-card-shadow); transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;">
+                <div class="admin-panel-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; transition: border-color 0.3s;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s;">Retos Propuestos Pendientes</h3>
                     <span class="admin-badge admin-badge-indigo" id="pending-exercises-badge">0 Pendientes</span>
                 </div>
 
@@ -153,8 +156,8 @@ function createAdminSyllabusView() {
 
 function createExercisesEmptyState() {
     return `
-        <div class="admin-empty-state" style="text-align: center; padding: 3rem 1rem; color: #64748b;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #94a3b8;">
+        <div class="admin-empty-state" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: var(--text-muted);">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -162,24 +165,24 @@ function createExercisesEmptyState() {
                 <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
             <p style="font-weight: 600; margin-bottom: 0.25rem;">No hay retos sugeridos pendientes</p>
-            <p style="font-size: 0.85rem; color: #94a3b8;">Sube un archivo para que el agente extraiga la información del sílabo.</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Sube un archivo para que el agente extraiga la información del sílabo.</p>
         </div>
     `;
 }
 
 function renderPendingExercisesList() {
     return adminPendingExercises.map(ex => `
-        <div class="exercise-card" style="border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; background: #f8fafc;">
+        <div class="exercise-card" style="border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 1.25rem; background: var(--bg-tertiary); transition: background 0.3s, border-color 0.3s;">
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
-                <h4 style="font-weight: 700; color: #1e293b; font-size: 1.05rem; margin: 0;">${ex.titulo}</h4>
+                <h4 style="font-weight: 700; color: var(--text-primary); font-size: 1.05rem; margin: 0; transition: color 0.3s;">${ex.titulo}</h4>
                 <div style="display: flex; gap: 0.5rem;">
                     <span class="admin-badge admin-badge-indigo" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">${ex.tema}</span>
                     <span class="admin-badge admin-badge-amber" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">${ex.dificultad}</span>
                 </div>
             </div>
-            <p style="font-size: 0.875rem; color: #475569; margin: 0 0 1.25rem 0; line-height: 1.4;">${ex.descripcion}</p>
+            <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0 0 1.25rem 0; line-height: 1.4; transition: color 0.3s;">${ex.descripcion}</p>
             
-            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 0.75rem;">
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 0.75rem; transition: border-color 0.3s;">
                 <button onclick="approveExercise(${ex.id})" style="display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem 1rem; background: #10b981; color: white; border: none; border-radius: 0.375rem; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: background 0.2s;">
                     Aprobar Reto
                 </button>

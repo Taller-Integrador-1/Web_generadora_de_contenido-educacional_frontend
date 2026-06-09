@@ -1,5 +1,6 @@
-//const API_BASE_URL = 'http://127.0.0.1:8000';
-const API_BASE_URL = 'https://halayoc-edtech-backend.hf.space';
+const API_BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' || window.location.protocol === 'file:')
+    ? 'http://127.0.0.1:8000'
+    : 'https://halayoc-edtech-backend.hf.space';
 
 const AppState = {
     usuario_id: null,
@@ -21,6 +22,10 @@ function updateState(newState) {
 
 function bootstrapApp() {
     console.log('🚀 Inicializando G29: Programación Adaptativa');
+
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
     const userSession = localStorage.getItem('currentUser');
 
     if (!userSession) {
@@ -226,11 +231,32 @@ function rebuildProfileLayout() {
         <header id="header"></header>
 
         <!-- Main Content (Full screen profile & stats) -->
-        <div class="main-content" style="padding: 2rem; display: block; overflow-y: auto; background: #f8fafc;">
+        <div class="main-content" style="padding: 2rem; display: block; overflow-y: auto; background: var(--stats-dashboard-bg); transition: background 0.3s;">
             <div id="stats-dashboard" class="stats-dashboard-container"></div>
         </div>
     `;
 }
 
 document.addEventListener('DOMContentLoaded', bootstrapApp);
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+
+    if (codeEditorInstance) {
+        codeEditorInstance.setOption("theme", newTheme === 'dark' ? 'dracula' : 'default');
+    }
+
+    const themeBtns = document.querySelectorAll('.theme-toggle-btn');
+    themeBtns.forEach(btn => {
+        btn.innerHTML = newTheme === 'dark' ? Icons.sun : Icons.moon;
+    });
+
+    if (AppState.currentView === 'profile') {
+        renderStatsDashboard();
+    }
+}
 

@@ -29,6 +29,10 @@ function createHeader() {
         </div>
 
         <div class="header-right">
+            <button class="theme-toggle-btn" onclick="toggleTheme()" title="Cambiar Tema" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: var(--text-secondary); transition: background 0.2s, color 0.2s; padding: 0;" onmouseover="this.style.background='var(--border-light)'" onmouseout="this.style.background='none'">
+                ${(document.documentElement.getAttribute('data-theme') === 'dark') ? Icons.sun : Icons.moon}
+            </button>
+
             <div class="xp-card">
                 ${Icons.trophy}
                 <div>

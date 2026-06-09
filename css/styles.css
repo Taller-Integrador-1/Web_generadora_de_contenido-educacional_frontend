@@ -4,11 +4,166 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --border-light: rgba(0, 0, 0, 0.05);
+    --card-bg: #ffffff;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    
+    /* Header & Sidebar */
+    --header-bg: linear-gradient(to right, #ffffff, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05));
+    --sidebar-bg: linear-gradient(to bottom, #f8fafc, rgba(99, 102, 241, 0.05));
+    
+    /* Code Editor & Console in LIGHT mode */
+    --editor-header-bg: linear-gradient(to right, #f8fafc, #f1f5f9);
+    --editor-header-border: #e2e8f0;
+    --editor-title-color: #1f2937;
+    --editor-meta-color: #6b7280;
+    --editor-btn-reset-bg: rgba(0, 0, 0, 0.05);
+    --editor-btn-reset-border: rgba(0, 0, 0, 0.1);
+    --editor-btn-reset-color: #1f2937;
+    --editor-container-bg: #ffffff;
+    --editor-container-border: #e2e8f0;
+    --editor-container-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    
+    --description-box-bg: rgba(99, 102, 241, 0.05);
+    --description-box-border: rgba(99, 102, 241, 0.1);
+    --description-box-color: #374151;
+    --description-text-color: #4b5563;
+    --description-dashed-border: rgba(99, 102, 241, 0.2);
+    
+    --console-bg: #ffffff;
+    --console-border: #cbd5e1;
+    --console-header-bg: #f1f5f9;
+    --console-text-color: #1f2937;
+    --console-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --console-header-color: #4b5563;
+    --console-line-color: #1f2937;
+    --console-line-border: rgba(0, 0, 0, 0.05);
+    
+    /* Tutor panel (Tutor Chat) */
+    --tutor-panel-bg: linear-gradient(to bottom, #ffffff, rgba(99, 102, 241, 0.02));
+    --tutor-panel-border: rgba(0, 0, 0, 0.1);
+    --tutor-header-bg: linear-gradient(to right, #ffffff, rgba(99, 102, 241, 0.05));
+    --tutor-header-title: #1f2937;
+    --tutor-chat-bg: #ffffff;
+    --tutor-input-container-bg: #ffffff;
+    --tutor-input-bg: #f1f5f9;
+    --tutor-input-border: #e2e8f0;
+    --tutor-input-color: #1f2937;
+    --tutor-bubble-user-bg: linear-gradient(to right, #6366f1, #9333ea);
+    --tutor-bubble-user-color: #ffffff;
+    --tutor-bubble-assistant-bg: #f1f5f9;
+    --tutor-bubble-assistant-color: #1f2937;
+    --tutor-bubble-assistant-border: #e2e8f0;
+    
+    /* Stats & Profile Dashboard */
+    --stats-dashboard-bg: #f8fafc;
+    --stats-card-bg: #ffffff;
+    --stats-card-border: #e2e8f0;
+    --stats-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --stats-text-val: #1e293b;
+    --stats-input-bg: #ffffff;
+    --stats-input-border: #cbd5e1;
+    --stats-input-color: #1f2937;
+    --stats-input-focus-bg: #ffffff;
+    --stats-input-disabled-bg: #f1f5f9;
+    
+    /* Code Editor Header Selectors */
+    --editor-select-bg: #ffffff;
+    --editor-select-color: #1f2937;
+    --editor-select-border: #cbd5e1;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #0f172a;
+    --bg-secondary: #0f172a;
+    --bg-tertiary: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-light: rgba(255, 255, 255, 0.05);
+    --card-bg: #1e293b;
+    --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    
+    /* Header & Sidebar */
+    --header-bg: linear-gradient(to right, #0f172a, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+    --sidebar-bg: linear-gradient(to bottom, #0f172a, rgba(99, 102, 241, 0.08));
+    
+    /* Code Editor & Console in DARK mode */
+    --editor-header-bg: linear-gradient(to right, rgba(30, 30, 48, 0.95), rgba(42, 42, 64, 0.95));
+    --editor-header-border: rgba(99, 102, 241, 0.2);
+    --editor-title-color: #ffffff;
+    --editor-meta-color: #9ca3af;
+    --editor-btn-reset-bg: rgba(255, 255, 255, 0.1);
+    --editor-btn-reset-border: rgba(255, 255, 255, 0.1);
+    --editor-btn-reset-color: #ffffff;
+    --editor-container-bg: #282a36;
+    --editor-container-border: rgba(255, 255, 255, 0.05);
+    --editor-container-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    
+    --description-box-bg: rgba(255, 255, 255, 0.03);
+    --description-box-border: rgba(255, 255, 255, 0.05);
+    --description-box-color: #e2e8f0;
+    --description-text-color: #cbd5e1;
+    --description-dashed-border: rgba(255, 255, 255, 0.1);
+    
+    --console-bg: linear-gradient(to bottom, #0f0f1e, #1a1a2e);
+    --console-border: rgba(239, 68, 68, 0.2);
+    --console-header-bg: linear-gradient(to right, rgba(127, 29, 29, 0.3), rgba(154, 52, 18, 0.3));
+    --console-text-color: #e2e8f0;
+    --console-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    --console-header-color: #fca5a5;
+    --console-line-color: #e2e8f0;
+    --console-line-border: rgba(255, 255, 255, 0.05);
+    
+    /* Tutor panel (Tutor Chat) */
+    --tutor-panel-bg: linear-gradient(to bottom, #0f172a, rgba(99, 102, 241, 0.03));
+    --tutor-panel-border: rgba(255, 255, 255, 0.1);
+    --tutor-header-bg: linear-gradient(to right, #0f172a, rgba(99, 102, 241, 0.08));
+    --tutor-header-title: #ffffff;
+    --tutor-chat-bg: #0f172a;
+    --tutor-input-container-bg: #1e293b;
+    --tutor-input-bg: #0f172a;
+    --tutor-input-border: #334155;
+    --tutor-input-color: #ffffff;
+    --tutor-bubble-user-bg: linear-gradient(to right, #6366f1, #9333ea);
+    --tutor-bubble-user-color: #ffffff;
+    --tutor-bubble-assistant-bg: #1e293b;
+    --tutor-bubble-assistant-color: #f8fafc;
+    --tutor-bubble-assistant-border: #334155;
+    
+    /* Stats & Profile Dashboard */
+    --stats-dashboard-bg: #0f172a;
+    --stats-card-bg: #1e293b;
+    --stats-card-border: #334155;
+    --stats-card-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    --stats-text-val: #ffffff;
+    --stats-input-bg: #0f172a;
+    --stats-input-border: #475569;
+    --stats-input-color: #ffffff;
+    --stats-input-focus-bg: #1e293b;
+    --stats-input-disabled-bg: #1e293b;
+    
+    /* Code Editor Header Selectors */
+    --editor-select-bg: rgba(255, 255, 255, 0.05);
+    --editor-select-color: #ffffff;
+    --editor-select-border: rgba(255, 255, 255, 0.15);
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
-    background: #ffffff;
-    color: #1f2937;
+    background: var(--bg-primary);
+    color: var(--text-primary);
     overflow: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .app-container {
@@ -27,13 +182,14 @@ body {
 /* ==================== HEADER ==================== */
 #header {
     height: 80px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    background: linear-gradient(to right, #ffffff, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05));
+    border-bottom: 1px solid var(--border-color);
+    background: var(--header-bg);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px var(--border-light);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .header-left {
@@ -82,7 +238,8 @@ body {
 
 .header-title p {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
 }
 
 .header-right {
@@ -117,10 +274,11 @@ body {
     align-items: center;
     gap: 1rem;
     padding: 0.5rem 1rem;
-    background: white;
+    background: var(--card-bg);
     border-radius: 0.75rem;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .user-info {
@@ -130,7 +288,8 @@ body {
 .user-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
 .user-level {
@@ -157,16 +316,18 @@ body {
 .learning-map-sidebar {
     width: 288px;
     flex-shrink: 0;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-    background: linear-gradient(to bottom, #f8fafc, rgba(99, 102, 241, 0.05));
+    border-right: 1px solid var(--border-color);
+    background: var(--sidebar-bg);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .progress-header {
     padding: 1.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--border-light);
+    transition: border-color 0.3s ease;
 }
 
 .progress-title {
@@ -175,15 +336,17 @@ body {
     gap: 0.5rem;
     margin-bottom: 1rem;
     font-weight: 700;
-    color: #1f2937;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
 .progress-card {
-    background: white;
+    background: var(--card-bg);
     border-radius: 1rem;
     padding: 1.25rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e0e7ff;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .circular-progress {
@@ -198,9 +361,10 @@ body {
 }
 
 .progress-ring-circle {
-    stroke: #e5e7eb;
+    stroke: var(--border-color);
     fill: none;
     stroke-width: 5;
+    transition: stroke 0.3s ease;
 }
 
 .progress-ring-circle-fill {
@@ -227,13 +391,15 @@ body {
 
 .progress-label {
     font-size: 0.7rem;
-    color: #6b7280;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
 }
 
 .progress-stats {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid var(--border-light);
+    transition: border-color 0.3s ease;
 }
 
 .stat-row {
@@ -245,11 +411,14 @@ body {
 }
 
 .stat-label {
-    color: #6b7280;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
 }
 
 .stat-value {
     font-weight: 700;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
 .skill-tree-container {
@@ -261,10 +430,11 @@ body {
 .skill-tree-title {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #6b7280;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 1.5rem;
+    transition: color 0.3s ease;
 }
 
 .skill-tree {
@@ -294,7 +464,8 @@ body {
 }
 
 .connector-default {
-    background: #d1d5db;
+    background: var(--border-color);
+    transition: background 0.3s ease;
 }
 
 /* ==================== SKILL NODE ==================== */
@@ -399,19 +570,20 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: var(--bg-secondary);
+    transition: background 0.3s ease;
 }
 
 .editor-header {
     height: 64px;
-    background: linear-gradient(to right, rgba(30, 30, 48, 0.95), rgba(42, 42, 64, 0.95));
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+    background: var(--editor-header-bg);
+    border-bottom: 1px solid var(--editor-header-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px var(--border-light);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .editor-title-section {
@@ -433,8 +605,9 @@ body {
 
 .editor-title h3 {
     font-weight: 700;
-    color: white;
+    color: var(--editor-title-color);
     font-size: 0.95rem;
+    transition: color 0.3s ease;
 }
 
 .difficulty-badge {
@@ -453,7 +626,8 @@ body {
     gap: 0.75rem;
     margin-top: 0.25rem;
     font-size: 0.75rem;
-    color: #9ca3af;
+    color: var(--editor-meta-color);
+    transition: color 0.3s ease;
 }
 
 .meta-separator {
@@ -492,9 +666,9 @@ body {
 
 .btn-reset {
     padding: 0.625rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--editor-btn-reset-bg);
+    color: var(--editor-btn-reset-color);
+    border: 1px solid var(--editor-btn-reset-border);
     border-radius: 0.75rem;
     font-size: 0.875rem;
     font-weight: 500;
@@ -502,26 +676,49 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    backdrop-filter: blur(10px);
     transition: all 0.3s ease;
 }
 
 .btn-reset:hover {
-    background: rgba(255, 255, 255, 0.2);
+    opacity: 0.85;
+}
+
+/* Code Editor Selects */
+.editor-select {
+    background: var(--editor-select-bg);
+    color: var(--editor-select-color);
+    border: 1px solid var(--editor-select-border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.editor-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+.editor-select option {
+    background: var(--card-bg);
+    color: var(--text-primary);
 }
 
 .code-area {
     flex: 1;
     overflow: hidden;
     /* CodeMirror handles its own scroll */
-    background: #282a36;
-    /* Dracula background to match theme */
+    background: var(--editor-container-bg);
     margin: 1rem;
     border-radius: 1rem;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: var(--editor-container-shadow);
+    border: 1px solid var(--editor-container-border);
     display: flex;
     flex-direction: column;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* CodeMirror Overrides */
@@ -536,22 +733,23 @@ body {
 
 .console-output {
     height: 192px;
-    background: linear-gradient(to bottom, #0f0f1e, #1a1a2e);
+    background: var(--console-bg);
     margin: 0 1rem 1rem 1rem;
     border-radius: 1rem;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    box-shadow: var(--console-shadow);
+    border: 1px solid var(--console-border);
     overflow: hidden;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .console-header {
     height: 48px;
-    background: linear-gradient(to right, rgba(127, 29, 29, 0.3), rgba(154, 52, 18, 0.3));
+    background: var(--console-header-bg);
     display: flex;
     align-items: center;
     padding: 0 1.25rem;
-    border-bottom: 1px solid rgba(239, 68, 68, 0.2);
-    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--console-border);
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .console-title {
@@ -564,7 +762,7 @@ body {
     width: 32px;
     height: 32px;
     border-radius: 0.5rem;
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -573,7 +771,8 @@ body {
 .console-title span {
     font-weight: 600;
     font-size: 0.875rem;
-    color: #f87171;
+    color: var(--console-header-color);
+    transition: color 0.3s ease;
 }
 
 .console-indicators {
@@ -608,7 +807,7 @@ body {
     font-size: 0.875rem;
     overflow-y: auto;
     height: 144px;
-    background: rgba(0, 0, 0, 0.2);
+    background: transparent;
 }
 
 .console-line {
@@ -633,13 +832,13 @@ body {
     min-width: 300px;
     max-width: 600px;
     flex-shrink: 0;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
-    background: linear-gradient(to bottom, white, rgba(99, 102, 241, 0.03));
+    border-left: 1px solid var(--tutor-panel-border);
+    background: var(--tutor-panel-bg);
     display: flex;
     flex-direction: column;
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.05);
     position: relative;
-    transition: width 0.3s ease, min-width 0.3s ease;
+    transition: width 0.3s ease, min-width 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
 .tutor-panel.collapsed {
@@ -686,8 +885,8 @@ body {
     transform: translateY(-50%);
     width: 32px;
     height: 48px;
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-right: none;
     border-radius: 8px 0 0 8px;
     display: flex;
@@ -697,11 +896,11 @@ body {
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
     z-index: 60;
     color: #6366f1;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .tutor-toggle-btn:hover {
-    background: #f8fafc;
+    background: var(--bg-secondary);
     width: 36px;
     left: -36px;
 }
@@ -709,12 +908,13 @@ body {
 
 .tutor-header {
     height: 80px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    background: linear-gradient(to right, #eef2ff, #f3e8ff);
+    border-bottom: 1px solid var(--tutor-panel-border);
+    background: var(--tutor-header-bg);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 1.5rem;
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .tutor-title {
@@ -737,12 +937,14 @@ body {
 .tutor-title-text h2 {
     font-weight: 700;
     font-size: 1rem;
-    color: #1f2937;
+    color: var(--tutor-header-title);
+    transition: color 0.3s ease;
 }
 
 .tutor-title-text p {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
 }
 
 .reflection-badge {
@@ -772,8 +974,8 @@ body {
     flex: 1;
     overflow-y: auto;
     padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
+    background: var(--tutor-chat-bg);
+    transition: background 0.3s ease;
 }
 
 .chat-messages {
@@ -817,7 +1019,7 @@ body {
     flex: 1;
     padding: 1rem;
     border-radius: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--border-light);
     border: 1px solid;
     transition: all 0.3s ease;
 }
@@ -827,13 +1029,15 @@ body {
 }
 
 .message-ai {
-    background: linear-gradient(135deg, #f9fafb 0%, rgba(99, 102, 241, 0.05) 100%);
-    border-color: #e0e7ff;
+    background: var(--tutor-bubble-assistant-bg);
+    border-color: var(--tutor-bubble-assistant-border);
+    color: var(--tutor-bubble-assistant-color);
 }
 
 .message-user {
-    background: linear-gradient(135deg, #f0fdfa 0%, rgba(16, 185, 129, 0.05) 100%);
-    border-color: #ccfbf1;
+    background: var(--tutor-bubble-user-bg);
+    border-color: var(--border-color);
+    color: var(--tutor-bubble-user-color);
 }
 
 .message-header {
@@ -852,7 +1056,7 @@ body {
 .message-text {
     font-size: 0.875rem;
     line-height: 1.6;
-    color: #374151;
+    color: inherit;
 }
 
 /* ==================== GAMIFICATION STATS ==================== */
@@ -964,8 +1168,9 @@ body {
 /* ==================== INPUT AREA ==================== */
 .input-area {
     padding: 1.5rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    background: white;
+    border-top: 1px solid var(--tutor-panel-border);
+    background: var(--tutor-input-container-bg);
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .input-wrapper {
@@ -983,10 +1188,10 @@ body {
 .reflection-input {
     width: 100%;
     padding: 1rem 3.5rem 1rem 3rem;
-    border: 2px solid #c7d2fe;
+    border: 2px solid var(--tutor-input-border);
     border-radius: 0.75rem;
-    background: rgba(99, 102, 241, 0.05);
-    color: #1f2937;
+    background: var(--tutor-input-bg);
+    color: var(--tutor-input-color);
     font-size: 0.875rem;
     font-weight: 500;
     font-family: inherit;
@@ -1000,7 +1205,7 @@ body {
 }
 
 .reflection-input::placeholder {
-    color: #9ca3af;
+    color: var(--text-muted);
 }
 
 .send-button {
@@ -1273,18 +1478,20 @@ body {
     flex-direction: column;
     height: 100vh;
     width: 100vw;
-    background: #f8fafc;
+    background: var(--bg-secondary);
+    transition: background 0.3s ease;
 }
 
 .admin-header {
     height: 80px;
-    background: white;
-    border-bottom: 1px solid #e2e8f0;
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 1px 3px var(--border-light);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .admin-main-content {
@@ -1305,20 +1512,22 @@ body {
 .admin-welcome-title h2 {
     font-size: 1.5rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
 .admin-welcome-title p {
     font-size: 0.875rem;
-    color: #64748b;
+    color: var(--text-muted);
     margin-top: 0.25rem;
+    transition: color 0.3s ease;
 }
 
 .admin-btn-logout {
     padding: 0.625rem 1.25rem;
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #cbd5e1;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     font-size: 0.875rem;
     font-weight: 600;
@@ -1326,47 +1535,50 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .admin-btn-logout:hover {
-    background: #e2e8f0;
-    color: #0f172a;
+    background: var(--border-color);
+    color: var(--text-primary);
 }
 
 .admin-grid-layout {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2.5fr 1fr;
     gap: 2rem;
     flex: 1;
     min-height: 0;
 }
 
 .admin-panel-card {
-    background: white;
+    background: var(--card-bg);
     border-radius: 1.25rem;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .admin-panel-card-header {
     padding: 1.5rem 2rem;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: border-color 0.3s ease;
 }
 
 .admin-panel-card-header h3 {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    transition: color 0.3s ease;
 }
 
 .admin-table-container {
@@ -1381,21 +1593,23 @@ body {
 }
 
 .admin-table th {
-    background: #f8fafc;
+    background: var(--bg-secondary);
     padding: 1rem 1.5rem;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #475569;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .admin-table td {
     padding: 1.25rem 1.5rem;
     font-size: 0.875rem;
-    color: #334155;
-    border-bottom: 1px solid #f1f5f9;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-light);
+    transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 .admin-table tbody tr {
@@ -1404,11 +1618,11 @@ body {
 }
 
 .admin-table tbody tr:hover {
-    background: #f8fafc;
+    background: var(--bg-secondary);
 }
 
 .admin-table tbody tr.selected {
-    background: rgba(99, 102, 241, 0.04);
+    background: rgba(99, 102, 241, 0.08);
 }
 
 .admin-avatar {
@@ -1437,12 +1651,14 @@ body {
 
 .admin-user-name {
     font-weight: 600;
-    color: #0f172a;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
 .admin-user-code {
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
 }
 
 .admin-badge {
@@ -1490,12 +1706,14 @@ body {
     flex: 1;
     padding: 3rem;
     text-align: center;
-    color: #94a3b8;
+    color: var(--text-muted);
     gap: 1rem;
+    transition: color 0.3s ease;
 }
 
 .admin-empty-state svg {
-    color: #cbd5e1;
+    color: var(--border-color);
+    transition: color 0.3s ease;
 }
 
 .admin-form-group-flex {
@@ -1508,23 +1726,24 @@ body {
     display: block;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #475569;
+    color: var(--text-secondary);
     margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    transition: color 0.3s ease;
 }
 
 .admin-input,
 .admin-select {
     width: 100%;
     padding: 0.75rem 1rem;
-    background: white;
-    border: 1px solid #cbd5e1;
+    background: var(--stats-input-bg);
+    border: 1px solid var(--stats-input-border);
     border-radius: 0.75rem;
-    color: #0f172a;
+    color: var(--stats-input-color);
     font-size: 0.875rem;
     font-family: inherit;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .admin-input:focus,
@@ -1535,9 +1754,9 @@ body {
 }
 
 .admin-input:disabled {
-    background: #f8fafc;
-    color: #64748b;
-    border-color: #e2e8f0;
+    background: var(--stats-input-disabled-bg);
+    color: var(--text-muted);
+    border-color: var(--border-color);
     cursor: not-allowed;
 }
 

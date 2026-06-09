@@ -40,42 +40,42 @@ function createStatsDashboard() {
                 <!-- Grid de Métricas de Estudio -->
                 <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
                     <!-- XP Acumulado -->
-                    <div class="metric-card animate-fade-in" style="background: white; border-radius: 1rem; padding: 1.25rem; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: transform 0.2s;">
+                    <div class="metric-card animate-fade-in" style="background: var(--stats-card-bg); border-radius: 1rem; padding: 1.25rem; border: 1px solid var(--stats-card-border); display: flex; align-items: center; gap: 1rem; box-shadow: var(--stats-card-shadow); transition: transform 0.2s, background 0.3s, border-color 0.3s;">
                         <div style="width: 48px; height: 48px; border-radius: 0.75rem; background: rgba(245, 158, 11, 0.08); color: #d97706; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.25rem;">
                             ${Icons.trophy}
                         </div>
                         <div>
                             <div style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">XP Total</div>
-                            <div style="font-size: 1.35rem; font-weight: 800; color: #1e293b; margin-top: 1px; line-height: 1;">${AppState.totalXP}</div>
+                            <div style="font-size: 1.35rem; font-weight: 800; color: var(--stats-text-val); margin-top: 1px; line-height: 1; transition: color 0.3s;">${AppState.totalXP}</div>
                         </div>
                     </div>
                     
                     <!-- Racha de Estudio -->
-                    <div class="metric-card animate-fade-in" style="background: white; border-radius: 1rem; padding: 1.25rem; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: transform 0.2s;">
+                    <div class="metric-card animate-fade-in" style="background: var(--stats-card-bg); border-radius: 1rem; padding: 1.25rem; border: 1px solid var(--stats-card-border); display: flex; align-items: center; gap: 1rem; box-shadow: var(--stats-card-shadow); transition: transform 0.2s, background 0.3s, border-color 0.3s;">
                         <div style="width: 48px; height: 48px; border-radius: 0.75rem; background: rgba(16, 185, 129, 0.08); color: #059669; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.25rem;">
                             ${Icons.award}
                         </div>
                         <div>
                             <div style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Racha</div>
-                            <div style="font-size: 1.35rem; font-weight: 800; color: #1e293b; margin-top: 1px; line-height: 1;">1 Día</div>
+                            <div style="font-size: 1.35rem; font-weight: 800; color: var(--stats-text-val); margin-top: 1px; line-height: 1; transition: color 0.3s;">1 Día</div>
                         </div>
                     </div>
                     
                     <!-- Tema Actual -->
-                    <div class="metric-card animate-fade-in" style="background: white; border-radius: 1rem; padding: 1.25rem; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: transform 0.2s;">
+                    <div class="metric-card animate-fade-in" style="background: var(--stats-card-bg); border-radius: 1rem; padding: 1.25rem; border: 1px solid var(--stats-card-border); display: flex; align-items: center; gap: 1rem; box-shadow: var(--stats-card-shadow); transition: transform 0.2s, background 0.3s, border-color 0.3s;">
                         <div style="width: 48px; height: 48px; border-radius: 0.75rem; background: rgba(59, 130, 246, 0.08); color: #2563eb; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.25rem;">
                             ${Icons.sparkles}
                         </div>
                         <div style="min-width: 0;">
                             <div style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Tema Activo</div>
-                            <div style="font-size: 1.05rem; font-weight: 800; color: #1e293b; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;" title="${AppState.tema_actual}">${AppState.tema_actual}</div>
+                            <div style="font-size: 1.05rem; font-weight: 800; color: var(--stats-text-val); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; transition: color 0.3s;" title="${AppState.tema_actual}">${AppState.tema_actual}</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Gráfica de Progreso de Aprendizaje -->
-                <div class="chart-card animate-fade-in" style="background: white; border-radius: 1rem; padding: 1.75rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e293b; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem; letter-spacing: -0.3px;">
+                <div class="chart-card animate-fade-in" style="background: var(--stats-card-bg); border-radius: 1rem; padding: 1.75rem; border: 1px solid var(--stats-card-border); box-shadow: var(--stats-card-shadow); transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem; letter-spacing: -0.3px; transition: color 0.3s;">
                         <span style="color: #6366f1; display: flex; align-items: center;">${Icons.trendingUp}</span>
                         <span>Progreso de Aprendizaje por Temas</span>
                     </h3>
@@ -87,8 +87,8 @@ function createStatsDashboard() {
 
             <!-- Columna Derecha: Edición de Perfil -->
             <div class="dashboard-right" style="display: flex; flex-direction: column;">
-                <div class="profile-edit-card animate-fade-in" style="background: white; border-radius: 1rem; padding: 2rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.02); height: 100%; box-sizing: border-box;">
-                    <h3 style="font-size: 1.2rem; font-weight: 800; color: #1e293b; margin: 0 0 1.75rem 0; display: flex; align-items: center; gap: 0.5rem; letter-spacing: -0.3px;">
+                <div class="profile-edit-card animate-fade-in" style="background: var(--stats-card-bg); border-radius: 1rem; padding: 2rem; border: 1px solid var(--stats-card-border); box-shadow: var(--stats-card-shadow); height: 100%; box-sizing: border-box; transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;">
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin: 0 0 1.75rem 0; display: flex; align-items: center; gap: 0.5rem; letter-spacing: -0.3px; transition: color 0.3s;">
                         <span style="color: #a855f7; display: flex; align-items: center;">${Icons.lightbulb}</span>
                         <span>Configuración de Perfil</span>
                     </h3>
@@ -103,7 +103,7 @@ function createStatsDashboard() {
                                 type="text" 
                                 value="${AppState.usuario_id}" 
                                 disabled 
-                                style="background: #f8fafc; color: #94a3b8; border: 1px solid #e2e8f0; border-radius: 0.6rem; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 700; cursor: not-allowed; outline: none;"
+                                style="background: var(--stats-input-disabled-bg); color: #94a3b8; border: 1px solid var(--stats-card-border); border-radius: 0.6rem; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 700; cursor: not-allowed; outline: none; transition: background 0.3s, border-color 0.3s;"
                             />
                         </div>
 
@@ -115,9 +115,9 @@ function createStatsDashboard() {
                                 id="edit-name" 
                                 value="${AppState.nombre}" 
                                 required
-                                style="background: white; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 0.6rem; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 600; outline: none; transition: all 0.2s;"
+                                style="background: var(--stats-input-bg); color: var(--stats-input-color); border: 1px solid var(--stats-input-border); border-radius: 0.6rem; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 600; outline: none; transition: all 0.3s;"
                                 onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99, 102, 241, 0.15)';"
-                                onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';"
+                                onblur="this.style.borderColor='var(--stats-input-border)'; this.style.boxShadow='none';"
                             />
                         </div>
 
@@ -129,9 +129,9 @@ function createStatsDashboard() {
                                 id="edit-email" 
                                 value="${AppState.correo}" 
                                 required
-                                style="background: white; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 0.6rem; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 600; outline: none; transition: all 0.2s;"
+                                style="background: var(--stats-input-bg); color: var(--stats-input-color); border: 1px solid var(--stats-input-border); border-radius: 0.6rem; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 600; outline: none; transition: all 0.3s;"
                                 onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99, 102, 241, 0.15)';"
-                                onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';"
+                                onblur="this.style.borderColor='var(--stats-input-border)'; this.style.boxShadow='none';"
                             />
                         </div>
 
@@ -143,9 +143,9 @@ function createStatsDashboard() {
                                 id="edit-password" 
                                 placeholder="Dejar vacío para conservar actual" 
                                 minlength="6"
-                                style="background: white; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 0.6rem; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 600; outline: none; transition: all 0.2s;"
+                                style="background: var(--stats-input-bg); color: var(--stats-input-color); border: 1px solid var(--stats-input-border); border-radius: 0.6rem; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 600; outline: none; transition: all 0.3s;"
                                 onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99, 102, 241, 0.15)';"
-                                onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';"
+                                onblur="this.style.borderColor='var(--stats-input-border)'; this.style.boxShadow='none';"
                             />
                         </div>
 
@@ -182,13 +182,19 @@ async function renderStatsDashboard() {
         const resolvedCounts = data.map(item => item.resolved);
         const totalCounts = data.map(item => item.total);
 
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const totalColor1 = isDark ? '#1e293b' : '#f1f5f9';
+        const totalColor2 = isDark ? '#334155' : '#e2e8f0';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9';
+        const textColor = isDark ? '#94a3b8' : '#64748b';
+
         const resolvedGradient = ctx.createLinearGradient(0, 0, 0, 250);
         resolvedGradient.addColorStop(0, '#3b82f6');
         resolvedGradient.addColorStop(1, '#6366f1');
 
         const totalGradient = ctx.createLinearGradient(0, 0, 0, 250);
-        totalGradient.addColorStop(0, '#f1f5f9');
-        totalGradient.addColorStop(1, '#e2e8f0');
+        totalGradient.addColorStop(0, totalColor1);
+        totalGradient.addColorStop(1, totalColor2);
 
         new Chart(ctx, {
             type: 'bar',
@@ -221,7 +227,7 @@ async function renderStatsDashboard() {
                         position: 'top',
                         labels: {
                             font: { family: 'Inter, sans-serif', size: 10, weight: '700' },
-                            color: '#64748b',
+                            color: textColor,
                             boxWidth: 10,
                             boxHeight: 10,
                             padding: 15
@@ -240,7 +246,7 @@ async function renderStatsDashboard() {
                         grid: { display: false },
                         ticks: {
                             font: { family: 'Inter, sans-serif', size: 9, weight: '600' },
-                            color: '#64748b'
+                            color: textColor
                         }
                     },
                     y: {
@@ -248,9 +254,9 @@ async function renderStatsDashboard() {
                         ticks: {
                             stepSize: 1,
                             font: { family: 'Inter, sans-serif', size: 9 },
-                            color: '#64748b'
+                            color: textColor
                         },
-                        grid: { color: '#f1f5f9' }
+                        grid: { color: gridColor }
                     }
                 }
             }

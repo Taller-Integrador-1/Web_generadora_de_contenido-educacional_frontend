@@ -27,12 +27,12 @@ function createCodeEditor() {
                             <span>Tiempo estimado: 10 min</span>
                         </div>
                         <div class="meta-separator"></div>
-                        <select id="language-selector" onchange="changeLanguage()" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 5px; font-size: 0.75rem; cursor: pointer;">
-                            <option value="python" style="color: black;">Python</option>
-                            <option value="java" style="color: black;">Java</option>
+                        <select id="language-selector" onchange="changeLanguage()" class="editor-select">
+                            <option value="python">Python</option>
+                            <option value="java">Java</option>
                         </select>
                         <div id="exercise-select-wrapper" style="margin-left: 0.5rem; display: none;">
-                            <select id="exercise-selector" onchange="selectExercise(this.value)" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 5px; font-size: 0.75rem; cursor: pointer;">
+                            <select id="exercise-selector" onchange="selectExercise(this.value)" class="editor-select">
                                 <!-- Cargado dinámicamente -->
                             </select>
                         </div>
@@ -57,19 +57,19 @@ function createCodeEditor() {
         </div>
 
         <!-- Caja de Descripción del Reto -->
-        <div class="reto-description-box" id="current-reto-description-box" style="margin: 1rem 1rem 0 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 0.75rem; color: #e2e8f0; font-size: 0.85rem; line-height: 1.5; display: none;">
+        <div class="reto-description-box" id="current-reto-description-box" style="margin: 1rem 1rem 0 1rem; padding: 1rem; background: var(--description-box-bg); border: 1px solid var(--description-box-border); border-radius: 0.75rem; color: var(--description-box-color); font-size: 0.85rem; line-height: 1.5; display: none; transition: background 0.3s, border-color 0.3s, color 0.3s;">
             <div style="font-weight: 700; color: #a855f7; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
                 ${Icons.lightbulb}
                 <span>Descripción del Reto</span>
             </div>
-            <p id="current-reto-description" style="margin: 0; color: #cbd5e1; font-weight: 400; white-space: pre-wrap;"></p>
+            <p id="current-reto-description" style="margin: 0; color: var(--description-text-color); font-weight: 400; white-space: pre-wrap; transition: color 0.3s;"></p>
             
-            <div id="current-reto-casos-prueba-section" style="margin-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.5rem; display: none;">
+            <div id="current-reto-casos-prueba-section" style="margin-top: 0.75rem; border-top: 1px dashed var(--description-dashed-border); padding-top: 0.5rem; display: none; transition: border-color 0.3s;">
                 <div style="font-weight: 700; color: #6366f1; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem;">
                     ${Icons.target}
                     <span>Casos de Prueba de Validación</span>
                 </div>
-                <div id="current-reto-casos-prueba" style="margin: 0; font-family: monospace; font-size: 0.75rem; color: #94a3b8; line-height: 1.4;"></div>
+                <div id="current-reto-casos-prueba" style="margin: 0; font-family: monospace; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; transition: color 0.3s;"></div>
             </div>
         </div>
 
@@ -115,7 +115,7 @@ function initCodeEditor() {
     codeEditorInstance = CodeMirror(container, {
         value: initialSnippets.python,
         mode: "python",
-        theme: "dracula",
+        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dracula' : 'default',
         lineNumbers: true,
         indentUnit: 4,
         matchBrackets: true,
@@ -296,7 +296,7 @@ function addExerciseSelector(exercises) {
             const disabledAttr = isLocked ? 'disabled' : '';
             const lockIcon = isLocked ? ' 🔒 (Bloqueado)' : '';
             return `
-                <option value="${idx}" ${disabledAttr} style="color: ${isLocked ? '#9ca3af' : 'black'};">
+                <option value="${idx}" ${disabledAttr} style="color: ${isLocked ? 'var(--text-muted)' : 'var(--text-primary)'}; background: var(--card-bg);">
                     Reto ${idx + 1}: ${ex.titulo}${lockIcon}
                 </option>
             `;
