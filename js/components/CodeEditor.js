@@ -617,7 +617,6 @@ async function validateCodeWithIA() {
         `).join('');
 
         if (!valResult.is_correct) {
-            // Abrir el panel del tutor si está oculto/colapsado
             const tutorPanel = document.getElementById('tutor-panel');
             if (tutorPanel && tutorPanel.classList.contains('collapsed')) {
                 tutorPanel.classList.remove('collapsed');

@@ -149,7 +149,11 @@ function createRegisterFormFields() {
 }
 
 function switchLoginTab(tab) {
-    if (loginActiveTab === tab) return;
+    if (loginActiveTab === tab) {
+        const alertContainer = document.getElementById('login-alert-container');
+        if (alertContainer) alertContainer.innerHTML = '';
+        return;
+    }
     loginActiveTab = tab;
     renderLoginScreen();
 }
@@ -174,7 +178,13 @@ async function handleAuthSubmit(event) {
                 body: JSON.stringify({ usuario_id: username, contrasena: contrasena })
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonErr) {
+                throw new Error('El servidor de base de datos o el backend no responde correctamente. Por favor, inténtalo de nuevo.');
+            }
+
             if (!response.ok) {
                 throw new Error(data.detail || 'Error de autenticación.');
             }
@@ -209,7 +219,13 @@ async function handleAuthSubmit(event) {
                 })
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonErr) {
+                throw new Error('El servidor de base de datos o el backend no responde correctamente. Por favor, inténtalo de nuevo.');
+            }
+
             if (!response.ok) {
                 throw new Error(data.detail || 'Error al registrar.');
             }
