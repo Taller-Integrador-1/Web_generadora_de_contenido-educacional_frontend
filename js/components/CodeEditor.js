@@ -152,7 +152,7 @@ async function loadExercisesForTopic(topicTitle) {
         return;
     }
     try {
-        const response = await fetch(`${API_BASE_URL}/api/exercises/${encodeURIComponent(topicTitle)}`);
+        const response = await fetch(`${API_BASE_URL}/api/exercises/${encodeURIComponent(topicTitle)}?usuario_id=${encodeURIComponent(AppState.usuario_id)}`);
         if (!response.ok) throw new Error('Error al obtener retos del tema');
         currentTopicExercises = await response.json();
 
@@ -615,6 +615,24 @@ async function validateCodeWithIA() {
                 <span style="white-space: pre-wrap; word-break: break-all;">${line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
             </div>
         `).join('');
+
+        if (!valResult.is_correct) {
+            // Abrir el panel del tutor si está oculto/colapsado
+            const tutorPanel = document.getElementById('tutor-panel');
+            if (tutorPanel && tutorPanel.classList.contains('collapsed')) {
+                tutorPanel.classList.remove('collapsed');
+                const toggleIcon = document.getElementById('toggle-icon');
+                if (toggleIcon) {
+                    toggleIcon.innerHTML = '<polyline points="9 18 15 12 9 6"></polyline>';
+                }
+            }
+
+            if (typeof sendAutomatedTutorMessage === 'function') {
+                const visibleUserText = `Mi código para el reto "${activeExercise.titulo}" no pasó la validación. ¿Por qué falló y cómo puedo solucionarlo?`;
+                const systemPrompt = `Mi código para el reto "${activeExercise.titulo}" no pasó la validación de la IA.\nLa retroalimentación del evaluador es:\n"${valResult.feedback}"\n\nPor favor, analízalo de forma socrática, guíame para entender qué parte de mi código está mal y cómo puedo corregirla sin darme la solución directamente.`;
+                sendAutomatedTutorMessage(systemPrompt, visibleUserText);
+            }
+        }
 
         if (valResult.is_correct && valResult.user_stats) {
             triggerConfettiEffect();

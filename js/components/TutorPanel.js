@@ -190,7 +190,10 @@ async function sendMessage() {
             body: JSON.stringify({
                 usuario_id: AppState.usuario_id,
                 mensaje: message,
-                dify_conversation_id: difyConversationId
+                dify_conversation_id: difyConversationId,
+                ejercicio_titulo: (typeof activeExercise !== 'undefined' && activeExercise) ? activeExercise.titulo : null,
+                ejercicio_descripcion: (typeof activeExercise !== 'undefined' && activeExercise) ? activeExercise.descripcion : null,
+                codigo_alumno: (typeof codeEditorInstance !== 'undefined' && codeEditorInstance) ? codeEditorInstance.getValue() : null
             })
         });
 
@@ -218,6 +221,76 @@ async function sendMessage() {
     } finally {
         input.disabled = false;
         input.focus();
+        scrollToBottom();
+    }
+}
+
+async function sendAutomatedTutorMessage(text, visibleUserText) {
+    const chatMessagesContainer = document.getElementById('chat-messages');
+    if (!chatMessagesContainer) return;
+
+    if (visibleUserText) {
+        const userMsg = { type: 'user', text: visibleUserText };
+        chatHistory.push(userMsg);
+        chatMessagesContainer.insertAdjacentHTML('beforeend', createChatMessage(userMsg));
+        scrollToBottom();
+    }
+
+    const loadingId = 'loading-' + Date.now();
+    const loadingMsg = `
+        <div class="chat-message ai" id="${loadingId}">
+            <div class="message-avatar avatar-ai">
+                ${Icons.brain}
+            </div>
+            <div class="message-content message-ai">
+                <div class="message-header">
+                    <span class="message-label">Tutor Socrático</span>
+                </div>
+                <p>...</p>
+            </div>
+        </div>
+    `;
+    chatMessagesContainer.insertAdjacentHTML('beforeend', loadingMsg);
+    scrollToBottom();
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/chat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                usuario_id: AppState.usuario_id,
+                mensaje: text,
+                dify_conversation_id: difyConversationId,
+                ejercicio_titulo: (typeof activeExercise !== 'undefined' && activeExercise) ? activeExercise.titulo : null,
+                ejercicio_descripcion: (typeof activeExercise !== 'undefined' && activeExercise) ? activeExercise.descripcion : null,
+                codigo_alumno: (typeof codeEditorInstance !== 'undefined' && codeEditorInstance) ? codeEditorInstance.getValue() : null
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+
+        const data = await response.json();
+        difyConversationId = data.dify_conversation_id;
+
+        const loadingElem = document.getElementById(loadingId);
+        if (loadingElem) loadingElem.remove();
+
+        const aiMsg = { type: 'ai', text: data.respuesta };
+        chatHistory.push(aiMsg);
+        chatMessagesContainer.insertAdjacentHTML('beforeend', createChatMessage(aiMsg));
+
+    } catch (error) {
+        console.error('Error al conectar con el backend:', error);
+        const loadingElem = document.getElementById(loadingId);
+        if (loadingElem) loadingElem.remove();
+
+        const errorMsg = { type: 'ai', text: 'Lo siento, hubo un error al obtener la retroalimentación del Tutor Socrático.' };
+        chatMessagesContainer.insertAdjacentHTML('beforeend', createChatMessage(errorMsg));
+    } finally {
         scrollToBottom();
     }
 }
