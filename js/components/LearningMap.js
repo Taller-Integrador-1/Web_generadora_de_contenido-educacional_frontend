@@ -128,32 +128,37 @@ function renderLearningMap() {
             </div>
         `;
 
-        fetch(`${API_BASE_URL}/api/exercises-counts`)
-            .then(res => {
+        Promise.all([
+            fetch(`${API_BASE_URL}/api/topics`).then(res => {
+                if (!res.ok) throw new Error('Error al obtener temas');
+                return res.json();
+            }),
+            fetch(`${API_BASE_URL}/api/exercises-counts`).then(res => {
                 if (!res.ok) throw new Error('Error al obtener conteos');
                 return res.json();
             })
-            .then(data => {
-                topicExerciseCounts = data;
+        ])
+        .then(([topics, counts]) => {
+            topicExerciseCounts = counts;
 
-                const activeTopicsFromDb = Object.keys(data).filter(topic => data[topic] > 0);
+            const activeTopicsFromDb = Object.keys(counts).filter(topic => counts[topic] > 0);
 
-                if (activeTopicsFromDb.length > 0) {
-                    allTopicsList = canonicalTopics.filter(topic => activeTopicsFromDb.includes(topic));
-                    if (!allTopicsList.includes(AppState.currentTopic)) {
-                        const oldTopic = AppState.currentTopic;
-                        AppState.currentTopic = allTopicsList[0];
-                        if (AppState.currentTopic !== oldTopic && typeof loadExercisesForTopic === 'function') {
-                            loadExercisesForTopic(AppState.currentTopic);
-                        }
+            if (activeTopicsFromDb.length > 0) {
+                allTopicsList = topics.filter(topic => activeTopicsFromDb.includes(topic));
+                if (!allTopicsList.includes(AppState.currentTopic)) {
+                    const oldTopic = AppState.currentTopic;
+                    AppState.currentTopic = allTopicsList[0];
+                    if (AppState.currentTopic !== oldTopic && typeof loadExercisesForTopic === 'function') {
+                        loadExercisesForTopic(AppState.currentTopic);
                     }
-                } else {
-                    allTopicsList = [];
-                    AppState.currentTopic = null;
                 }
+            } else {
+                allTopicsList = [];
+                AppState.currentTopic = null;
+            }
 
-                renderLearningMap();
-            })
+            renderLearningMap();
+        })
             .catch(e => {
                 console.error('Error al cargar conteos de temas:', e);
                 topicExerciseCounts = {};

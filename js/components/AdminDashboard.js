@@ -2,6 +2,29 @@ let adminStudentsList = [];
 let selectedStudent = null;
 let adminActiveTab = 'students';
 let adminPendingExercises = [];
+let adminTopicsList = [
+    'Variables',
+    'Tipos de Datos',
+    'Operadores',
+    'Condicionales',
+    'Bucles For',
+    'Bucles While',
+    'Funciones',
+    'Arrays',
+    'Objetos'
+];
+
+async function fetchAdminTopics() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/topics`);
+        if (response.ok) {
+            adminTopicsList = await response.json();
+        }
+    } catch (error) {
+        console.error("Error al obtener temas de la base de datos:", error);
+    }
+}
+
 
 function createAdminDashboard() {
     return `
@@ -139,18 +162,32 @@ function createAdminSyllabusView() {
                 </form>
             </div>
 
-            <!-- Visor de Sílabo Activo -->
-            <div class="admin-panel-card" style="padding: 1.5rem; background: var(--stats-card-bg); border-radius: 1rem; border: 1px solid var(--stats-card-border); box-shadow: var(--stats-card-shadow); transition: background 0.3s, border-color 0.3s, box-shadow 0.3s; display: flex; flex-direction: column;">
-                <div class="admin-panel-card-header" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; transition: border-color 0.3s;">
-                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s; display: flex; align-items: center; gap: 0.5rem;">
-                        ${Icons.fileText || ''}
-                        <span>Sílabo Activo</span>
-                    </h3>
+            <!-- Visor de Sílabo Activo y Materiales de Dify -->
+            <div class="admin-panel-card" style="padding: 1.5rem; background: var(--stats-card-bg); border-radius: 1rem; border: 1px solid var(--stats-card-border); box-shadow: var(--stats-card-shadow); transition: background 0.3s, border-color 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; gap: 1.5rem;">
+                <div>
+                    <div class="admin-panel-card-header" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; transition: border-color 0.3s;">
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s; display: flex; align-items: center; gap: 0.5rem;">
+                            ${Icons.fileCode || Icons.code}
+                            <span>Sílabo Activo en Sistema</span>
+                        </h3>
+                    </div>
+                    <div id="syllabus-viewer-container" style="display: flex; flex-direction: column; min-height: 0;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.3;" id="syllabus-viewer-meta">Cargando información del sílabo...</p>
+                        <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1rem; font-family: monospace; font-size: 0.8rem; overflow-y: auto; white-space: pre-wrap; color: var(--text-primary); height: 160px; max-height: 160px;" id="syllabus-viewer-text">
+                            No se ha cargado ningún sílabo en el sistema.
+                        </div>
+                    </div>
                 </div>
-                <div id="syllabus-viewer-container" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.3;" id="syllabus-viewer-meta">Cargando información del sílabo...</p>
-                    <div style="flex: 1; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1rem; font-family: monospace; font-size: 0.8rem; overflow-y: auto; white-space: pre-wrap; color: var(--text-primary); height: 280px; max-height: 350px;" id="syllabus-viewer-text">
-                        No se ha cargado ningún sílabo en el sistema.
+
+                <div style="border-top: 1px solid var(--border-light); padding-top: 1rem; display: flex; flex-direction: column; min-height: 0;">
+                    <div class="admin-panel-card-header" style="margin-bottom: 1rem; padding-bottom: 0.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s; display: flex; align-items: center; gap: 0.5rem;">
+                            ${Icons.brain || ''}
+                            <span>Materiales en Conocimiento (Dify RAG)</span>
+                        </h3>
+                    </div>
+                    <div id="dify-docs-container" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 250px; overflow-y: auto; padding-right: 0.25rem;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Cargando documentos de Dify...</p>
                     </div>
                 </div>
             </div>
@@ -265,6 +302,7 @@ async function handleSyllabusSubmit(event) {
         fileInput.value = '';
         await fetchPendingExercises();
         await fetchActiveSyllabus();
+        await fetchDifyDocuments();
 
     } catch (error) {
         console.error(error);
@@ -327,17 +365,7 @@ function createAdminEmptyState() {
 }
 
 function createAdminEditForm(student) {
-    const topicsOptions = [
-        'Variables',
-        'Tipos de Datos',
-        'Operadores',
-        'Condicionales',
-        'Bucles For',
-        'Bucles While',
-        'Funciones',
-        'Arrays',
-        'Objetos'
-    ];
+    const topicsOptions = adminTopicsList;
 
     return `
         <div id="admin-edit-alert"></div>
@@ -387,6 +415,7 @@ function createAdminEditForm(student) {
 
 async function fetchAdminStudents() {
     try {
+        await fetchAdminTopics();
         const response = await fetch(`${API_BASE_URL}/api/admin/users`);
         if (!response.ok) throw new Error('Error al obtener lista de alumnos');
 
@@ -526,6 +555,7 @@ function renderAdminDashboard() {
     } else {
         fetchPendingExercises();
         fetchActiveSyllabus();
+        fetchDifyDocuments();
     }
 }
 
@@ -558,4 +588,91 @@ async function fetchActiveSyllabus() {
         metaContainer.innerText = 'Error al consultar sílabo.';
         textContainer.innerText = 'No se pudo obtener la información de sílabos desde el servidor.';
     }
+}
+
+async function fetchDifyDocuments() {
+    const container = document.getElementById('dify-docs-container');
+    if (!container) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/dify-documents`);
+        if (!response.ok) throw new Error('Error al obtener documentos de Dify');
+        const data = await response.json();
+        
+        renderDifyDocuments(data.documents);
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = `
+            <div style="font-size: 0.85rem; color: #ef4444; display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem; background: rgba(239, 68, 68, 0.05); border-radius: 0.5rem; border: 1px solid rgba(239, 68, 68, 0.2);">
+                ${Icons.zap}
+                <span>Error al cargar documentos de Dify.</span>
+            </div>
+        `;
+    }
+}
+
+function renderDifyDocuments(documents) {
+    const container = document.getElementById('dify-docs-container');
+    if (!container) return;
+
+    if (!documents || documents.length === 0) {
+        container.innerHTML = `
+            <p style="font-size: 0.85rem; color: var(--text-muted); text-align: center; padding: 1rem 0;">
+                No hay documentos cargados en el conocimiento de Dify.
+            </p>
+        `;
+        return;
+    }
+
+    container.innerHTML = documents.map(doc => {
+        const info = doc.data_source_detail_dict?.upload_file || {};
+        const sizeKB = info.size ? Math.round(info.size / 1024) : 0;
+        const wordCount = doc.word_count || 0;
+        const tokens = doc.tokens || 0;
+        const hitCount = doc.hit_count || 0;
+        const status = doc.indexing_status || 'desconocido';
+
+        let statusColor = '#94a3b8';
+        let statusLabel = 'Procesando';
+        if (status === 'completed') {
+            statusColor = '#10b981';
+            statusLabel = 'Completado';
+        } else if (status === 'error') {
+            statusColor = '#ef4444';
+            statusLabel = 'Error';
+        }
+
+        const createdDate = doc.created_at ? new Date(doc.created_at * 1000).toLocaleString('es-PE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        }) : 'Reciente';
+
+        return `
+            <div style="border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 1rem; background: var(--bg-tertiary); display: flex; flex-direction: column; gap: 0.5rem; transition: background 0.3s, border-color 0.3s;">
+                <div style="display: flex; align-items: start; gap: 0.5rem; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
+                        <div style="color: #6366f1; flex-shrink: 0;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </div>
+                        <span style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${doc.name}">${doc.name}</span>
+                    </div>
+                    <span style="font-size: 0.7rem; background: ${statusColor}15; color: ${statusColor}; padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-weight: 800; text-transform: uppercase;">
+                        ${statusLabel}
+                    </span>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem; font-size: 0.75rem; color: var(--text-secondary); border-top: 1px solid var(--border-color); padding-top: 0.4rem; margin-top: 0.2rem;">
+                    <div><strong>Palabras:</strong> ${wordCount}</div>
+                    <div><strong>Tokens:</strong> ${tokens}</div>
+                    <div><strong>Tamaño:</strong> ${sizeKB} KB</div>
+                    <div><strong>Búsquedas (Hits):</strong> ${hitCount}</div>
+                    <div style="grid-column: span 2;"><strong>Cargado:</strong> ${createdDate}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
 }

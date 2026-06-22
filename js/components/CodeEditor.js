@@ -637,9 +637,11 @@ async function validateCodeWithIA() {
             }
 
             if (currentFails >= 3) {
-                const allTopicsList = ["Variables", "Tipos de Datos", "Operadores", "Condicionales", "Bucles For", "Bucles While", "Funciones", "Arrays", "Objetos"];
-                const currentIdx = allTopicsList.indexOf(AppState.tema_actual);
-                const prevTopic = currentIdx > 0 ? allTopicsList[currentIdx - 1] : null;
+                const topics = (typeof allTopicsList !== 'undefined' && allTopicsList.length > 0)
+                    ? allTopicsList
+                    : ["Variables", "Tipos de Datos", "Operadores", "Condicionales", "Bucles For", "Bucles While", "Funciones", "Arrays", "Objetos"];
+                const currentIdx = topics.indexOf(AppState.tema_actual);
+                const prevTopic = currentIdx > 0 ? topics[currentIdx - 1] : null;
 
                 setTimeout(() => {
                     showRegressionModal(prevTopic);
