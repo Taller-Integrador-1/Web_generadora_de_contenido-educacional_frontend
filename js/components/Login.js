@@ -82,7 +82,7 @@ function createLoginFormFields() {
 function createRegisterFormFields() {
     return `
         <div class="login-form-group">
-            <label for="reg-code">Código de Estudiante</label>
+            <label for="reg-code">Código de Estudiante (9 dígitos)</label>
             <div class="login-input-wrapper">
                 <div class="login-input-icon">
                     ${Icons.target}
@@ -91,7 +91,12 @@ function createRegisterFormFields() {
                     type="text" 
                     id="reg-code" 
                     class="login-input" 
-                    placeholder="Ej. UPAO-999" 
+                    placeholder="Ej. 202110293" 
+                    pattern="[0-9]{9}"
+                    minlength="9"
+                    maxlength="9"
+                    inputmode="numeric"
+                    title="El código de estudiante debe constar de exactamente 9 dígitos numéricos."
                     required
                 />
             </div>
@@ -108,6 +113,8 @@ function createRegisterFormFields() {
                     id="reg-name" 
                     class="login-input" 
                     placeholder="Ej. Pepito Pérez" 
+                    pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+"
+                    title="El nombre completo solo puede contener letras y espacios."
                     required
                 />
             </div>
@@ -124,13 +131,15 @@ function createRegisterFormFields() {
                     id="reg-email" 
                     class="login-input" 
                     placeholder="Ej. correo@upao.edu.pe" 
+                    pattern="[a-zA-Z0-9._%+-]+@upao\\.edu\\.pe"
+                    title="Por favor ingresa un correo institucional válido que termine en @upao.edu.pe"
                     required
                 />
             </div>
         </div>
 
         <div class="login-form-group">
-            <label for="reg-password">Contraseña</label>
+            <label for="reg-password">Contraseña Segura</label>
             <div class="login-input-wrapper">
                 <div class="login-input-icon">
                     ${Icons.award}
@@ -139,8 +148,9 @@ function createRegisterFormFields() {
                     type="password" 
                     id="reg-password" 
                     class="login-input" 
-                    placeholder="Min. 6 caracteres" 
-                    minlength="6"
+                    placeholder="Mayúscula, minúscula, número y símbolo" 
+                    pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+={}\\[\\]:;\\\"'<>,.?~\\\\/-]).{8,}"
+                    title="La contraseña debe tener al menos 8 caracteres, e incluir una mayúscula, una minúscula, un número y un carácter especial."
                     required
                 />
             </div>
@@ -207,6 +217,34 @@ async function handleAuthSubmit(event) {
             const name = document.getElementById('reg-name').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const contrasena = document.getElementById('reg-password').value;
+
+            if (!/^\d{9}$/.test(code)) {
+                throw new Error('El código de estudiante debe constar de exactamente 9 dígitos numéricos.');
+            }
+
+            if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(name)) {
+                throw new Error('El nombre completo solo puede contener letras y espacios.');
+            }
+
+            if (!/^[a-zA-Z0-9._%+-]+@upao\.edu\.pe$/i.test(email)) {
+                throw new Error('Por favor ingresa un correo institucional válido que termine en @upao.edu.pe');
+            }
+
+            if (contrasena.length < 8) {
+                throw new Error('La contraseña debe tener al menos 8 caracteres.');
+            }
+            if (!/[a-z]/.test(contrasena)) {
+                throw new Error('La contraseña debe incluir al menos una letra minúscula.');
+            }
+            if (!/[A-Z]/.test(contrasena)) {
+                throw new Error('La contraseña debe incluir al menos una letra mayúscula.');
+            }
+            if (!/\d/.test(contrasena)) {
+                throw new Error('La contraseña debe incluir al menos un número.');
+            }
+            if (!/[!@#$%^&*()_+={}\[\]:;"'<>,.?~\\/-]/.test(contrasena)) {
+                throw new Error('La contraseña debe incluir al menos un carácter especial (ej. !, @, #, $, etc.).');
+            }
 
             const response = await fetch(`${API_BASE_URL}/api/register`, {
                 method: 'POST',

@@ -112,7 +112,7 @@ function createAdminSyllabusView() {
             </div>
         </div>
 
-        <div class="admin-grid-layout" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+        <div class="admin-grid-layout" style="display: grid; grid-template-columns: 1.2fr 1.3fr 2fr; gap: 2rem;">
             <!-- Formulario de Carga -->
             <div class="admin-panel-card" style="padding: 1.5rem; background: var(--stats-card-bg); border-radius: 1rem; border: 1px solid var(--stats-card-border); box-shadow: var(--stats-card-shadow); transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;">
                 <div class="admin-panel-card-header" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; transition: border-color 0.3s;">
@@ -137,6 +137,22 @@ function createAdminSyllabusView() {
                         <span>Subir y Analizar Sílabo</span>
                     </button>
                 </form>
+            </div>
+
+            <!-- Visor de Sílabo Activo -->
+            <div class="admin-panel-card" style="padding: 1.5rem; background: var(--stats-card-bg); border-radius: 1rem; border: 1px solid var(--stats-card-border); box-shadow: var(--stats-card-shadow); transition: background 0.3s, border-color 0.3s, box-shadow 0.3s; display: flex; flex-direction: column;">
+                <div class="admin-panel-card-header" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; transition: border-color 0.3s;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s; display: flex; align-items: center; gap: 0.5rem;">
+                        ${Icons.fileText || ''}
+                        <span>Sílabo Activo</span>
+                    </h3>
+                </div>
+                <div id="syllabus-viewer-container" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.3;" id="syllabus-viewer-meta">Cargando información del sílabo...</p>
+                    <div style="flex: 1; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1rem; font-family: monospace; font-size: 0.8rem; overflow-y: auto; white-space: pre-wrap; color: var(--text-primary); height: 280px; max-height: 350px;" id="syllabus-viewer-text">
+                        No se ha cargado ningún sílabo en el sistema.
+                    </div>
+                </div>
             </div>
 
             <!-- Listado de Ejercicios Generados -->
@@ -248,6 +264,7 @@ async function handleSyllabusSubmit(event) {
 
         fileInput.value = '';
         await fetchPendingExercises();
+        await fetchActiveSyllabus();
 
     } catch (error) {
         console.error(error);
@@ -332,7 +349,7 @@ function createAdminEditForm(student) {
 
         <div class="login-form-group">
             <label class="admin-label">Nombre Completo</label>
-            <input type="text" id="edit-nombre" class="admin-input" value="${student.nombre}" required />
+            <input type="text" id="edit-nombre" class="admin-input" value="${student.nombre}" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="El nombre completo solo puede contener letras y espacios." required />
         </div>
 
         <div class="admin-form-group-flex">
@@ -438,6 +455,15 @@ async function saveStudentChanges(studentId) {
     alertDiv.innerHTML = '';
 
     const nombre = document.getElementById('edit-nombre').value.trim();
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
+        alertDiv.innerHTML = `
+            <div class="login-error-msg" style="margin-bottom: 1.25rem;">
+                ${Icons.zap}
+                <span>El nombre completo solo puede contener letras y espacios.</span>
+            </div>
+        `;
+        return;
+    }
     const nivel = parseInt(document.getElementById('edit-nivel').value);
     const xp = parseInt(document.getElementById('edit-xp').value);
     const porcentaje = parseInt(document.getElementById('edit-porcentaje').value);
@@ -499,5 +525,37 @@ function renderAdminDashboard() {
         fetchAdminStudents();
     } else {
         fetchPendingExercises();
+        fetchActiveSyllabus();
+    }
+}
+
+async function fetchActiveSyllabus() {
+    const metaContainer = document.getElementById('syllabus-viewer-meta');
+    const textContainer = document.getElementById('syllabus-viewer-text');
+    if (!metaContainer || !textContainer) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/syllabus`);
+        if (!response.ok) throw new Error('No se pudo obtener el sílabo');
+        const data = await response.json();
+        
+        if (data.filename) {
+            const fecha = new Date(data.fecha_subida).toLocaleString('es-PE', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            metaContainer.innerHTML = `<strong>Archivo:</strong> ${data.filename}<br><strong>Cargado:</strong> ${fecha}`;
+            textContainer.innerText = data.contenido;
+        } else {
+            metaContainer.innerText = 'No hay sílabo cargado actualmente.';
+            textContainer.innerText = 'Por favor, sube un sílabo en formato PDF o Word.';
+        }
+    } catch (error) {
+        console.error(error);
+        metaContainer.innerText = 'Error al consultar sílabo.';
+        textContainer.innerText = 'No se pudo obtener la información de sílabos desde el servidor.';
     }
 }

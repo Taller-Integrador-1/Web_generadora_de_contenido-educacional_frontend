@@ -617,6 +617,10 @@ async function validateCodeWithIA() {
         `).join('');
 
         if (!valResult.is_correct) {
+            const failKey = `consecutive_failures_${AppState.usuario_id}_${activeExercise.id}`;
+            let currentFails = parseInt(localStorage.getItem(failKey) || "0") + 1;
+            localStorage.setItem(failKey, currentFails.toString());
+
             const tutorPanel = document.getElementById('tutor-panel');
             if (tutorPanel && tutorPanel.classList.contains('collapsed')) {
                 tutorPanel.classList.remove('collapsed');
@@ -631,6 +635,19 @@ async function validateCodeWithIA() {
                 const systemPrompt = `Mi código para el reto "${activeExercise.titulo}" no pasó la validación de la IA.\nLa retroalimentación del evaluador es:\n"${valResult.feedback}"\n\nPor favor, analízalo de forma socrática, guíame para entender qué parte de mi código está mal y cómo puedo corregirla sin darme la solución directamente.`;
                 sendAutomatedTutorMessage(systemPrompt, visibleUserText);
             }
+
+            if (currentFails >= 3) {
+                const allTopicsList = ["Variables", "Tipos de Datos", "Operadores", "Condicionales", "Bucles For", "Bucles While", "Funciones", "Arrays", "Objetos"];
+                const currentIdx = allTopicsList.indexOf(AppState.tema_actual);
+                const prevTopic = currentIdx > 0 ? allTopicsList[currentIdx - 1] : null;
+
+                setTimeout(() => {
+                    showRegressionModal(prevTopic);
+                }, 1000);
+            }
+        } else {
+            const failKey = `consecutive_failures_${AppState.usuario_id}_${activeExercise.id}`;
+            localStorage.removeItem(failKey);
         }
 
         if (valResult.is_correct && valResult.user_stats) {
@@ -675,3 +692,133 @@ async function validateCodeWithIA() {
         }
     }
 }
+
+function showRegressionModal(prevTopic) {
+    let modal = document.getElementById('regression-modal-container');
+    if (modal) modal.remove();
+
+    modal = document.createElement('div');
+    modal.id = 'regression-modal-container';
+    modal.style = `
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100vw; 
+        height: 100vh; 
+        background: rgba(15, 12, 30, 0.8); 
+        backdrop-filter: blur(8px); 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        z-index: 9999; 
+        padding: 1.5rem; 
+        animation: fadeIn 0.3s ease-out;
+    `;
+
+    modal.innerHTML = `
+        <div style="background: var(--card-bg); border: 1px solid var(--border-color); width: 100%; max-width: 500px; border-radius: 1.5rem; padding: 2rem; box-shadow: var(--card-shadow); color: var(--text-primary); transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; gap: 1.5rem; animation: scaleIn 0.3s ease-out;">
+            <!-- Header -->
+            <div style="display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem; color: #f59e0b;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <h3 style="font-weight: 800; font-size: 1.15rem; margin: 0;">¿Necesitas ayuda con este reto?</h3>
+            </div>
+            
+            <!-- Body -->
+            <div style="font-size: 0.9rem; line-height: 1.5;">
+                <p>Hemos notado que has tenido varios intentos fallidos consecutivos en el reto <strong>${activeExercise ? activeExercise.titulo : ''}</strong>.</p>
+                <p style="margin-top: 0.75rem; font-weight: 700; color: var(--text-secondary);">Te recomendamos:</p>
+                <ul style="margin-top: 0.5rem; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                    ${prevTopic ? `<li>Repasar los conceptos del tema anterior (<strong>${prevTopic}</strong>) regresando al nivel correspondiente.</li>` : ''}
+                    <li>Pedir ayuda específica o pistas adicionales al Tutor Inteligente en el chat lateral.</li>
+                </ul>
+            </div>
+            
+            <!-- Footer/Actions -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; border-top: 1px solid var(--border-light); padding-top: 1.25rem; margin-top: 0.25rem;">
+                ${prevTopic ? `
+                <button onclick="regressToTopic('${prevTopic}')" style="background: linear-gradient(to right, #f59e0b, #d97706); color: white; border: none; border-radius: 0.75rem; padding: 0.8rem 1.5rem; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; outline: none; width: 100%;">
+                    Regresar al tema anterior (${prevTopic})
+                </button>
+                ` : ''}
+                <button onclick="closeRegressionModalAndAskHelp()" style="background: linear-gradient(to right, #6366f1, #9333ea); color: white; border: none; border-radius: 0.75rem; padding: 0.8rem 1.5rem; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; outline: none; width: 100%;">
+                    Pedir pistas en el chat
+                </button>
+                <button onclick="closeRegressionModal()" style="background: none; border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 0.75rem; padding: 0.8rem 1.5rem; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; outline: none; width: 100%;">
+                    Seguir intentando solo
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+async function regressToTopic(topicName) {
+    if (!AppState.usuario_id) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/users/${AppState.usuario_id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                tema_actual: topicName,
+                porcentaje: 0
+            })
+        });
+
+        if (!response.ok) throw new Error('Error al actualizar tema actual');
+        const data = await response.json();
+
+        if (typeof reloadStudentStats === 'function') {
+            reloadStudentStats(data);
+        }
+
+        closeRegressionModal();
+
+        if (activeExercise) {
+            const key = `consecutive_failures_${AppState.usuario_id}_${activeExercise.id}`;
+            localStorage.removeItem(key);
+        }
+
+        alert(`Has regresado al tema: ${topicName}. ¡Mucho éxito en tu repaso!`);
+
+    } catch (err) {
+        console.error('Error al hacer regresión:', err);
+        alert('Hubo un problema al intentar cambiar de nivel. Por favor, intenta de nuevo.');
+    }
+}
+
+function closeRegressionModalAndAskHelp() {
+    closeRegressionModal();
+
+    const chatInput = document.getElementById('reflection-input');
+    if (chatInput) {
+        chatInput.value = `Tengo dificultades con el reto "${activeExercise ? activeExercise.titulo : ''}" en el tema "${AppState.tema_actual}". ¿Me das una pista sobre cómo abordar este problema?`;
+        chatInput.focus();
+
+        const tutorPanel = document.getElementById('tutor-panel');
+        if (tutorPanel && tutorPanel.classList.contains('collapsed')) {
+            tutorPanel.classList.remove('collapsed');
+            const toggleIcon = document.getElementById('toggle-icon');
+            if (toggleIcon) {
+                toggleIcon.innerHTML = '<polyline points="9 18 15 12 9 6"></polyline>';
+            }
+        }
+    }
+}
+
+function closeRegressionModal() {
+    const modal = document.getElementById('regression-modal-container');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+window.showRegressionModal = showRegressionModal;
+window.regressToTopic = regressToTopic;
+window.closeRegressionModalAndAskHelp = closeRegressionModalAndAskHelp;
+window.closeRegressionModal = closeRegressionModal;

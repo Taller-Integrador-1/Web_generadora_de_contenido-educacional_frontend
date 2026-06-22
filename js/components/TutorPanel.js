@@ -17,7 +17,7 @@ function createTutorPanel() {
                         ${Icons.brain}
                     </div>
                     <div class="tutor-title-text">
-                        <h2>Tutor Socrático</h2>
+                        <h2>Tutor Agéntico</h2>
                         <p>Guía inteligente</p>
                     </div>
                 </div>
@@ -165,20 +165,9 @@ async function sendMessage() {
     scrollToBottom();
 
     const loadingId = 'loading-' + Date.now();
-    const loadingMsg = `
-        <div class="chat-message ai" id="${loadingId}">
-            <div class="message-avatar avatar-ai">
-                ${Icons.brain}
-            </div>
-            <div class="message-content message-ai">
-                <div class="message-header">
-                    <span class="message-label">Tutor Socrático</span>
-                </div>
-                <p>...</p>
-            </div>
-        </div>
-    `;
+    const loadingMsg = getAgentLoadingHTML(loadingId);
     chatMessagesContainer.insertAdjacentHTML('beforeend', loadingMsg);
+    animateAgentCollaboration(loadingId);
     scrollToBottom();
 
     try {
@@ -237,20 +226,9 @@ async function sendAutomatedTutorMessage(text, visibleUserText) {
     }
 
     const loadingId = 'loading-' + Date.now();
-    const loadingMsg = `
-        <div class="chat-message ai" id="${loadingId}">
-            <div class="message-avatar avatar-ai">
-                ${Icons.brain}
-            </div>
-            <div class="message-content message-ai">
-                <div class="message-header">
-                    <span class="message-label">Tutor Socrático</span>
-                </div>
-                <p>...</p>
-            </div>
-        </div>
-    `;
+    const loadingMsg = getAgentLoadingHTML(loadingId);
     chatMessagesContainer.insertAdjacentHTML('beforeend', loadingMsg);
+    animateAgentCollaboration(loadingId);
     scrollToBottom();
 
     try {
@@ -288,9 +266,131 @@ async function sendAutomatedTutorMessage(text, visibleUserText) {
         const loadingElem = document.getElementById(loadingId);
         if (loadingElem) loadingElem.remove();
 
-        const errorMsg = { type: 'ai', text: 'Lo siento, hubo un error al obtener la retroalimentación del Tutor Socrático.' };
+        const errorMsg = { type: 'ai', text: 'Lo siento, hubo un error al obtener la retroalimentación del Tutor Agéntico.' };
         chatMessagesContainer.insertAdjacentHTML('beforeend', createChatMessage(errorMsg));
     } finally {
         scrollToBottom();
     }
+}
+
+function getAgentLoadingHTML(loadingId) {
+    return `
+        <div class="chat-message ai" id="${loadingId}">
+            <div class="message-avatar avatar-ai">
+                ${Icons.brain}
+            </div>
+            <div class="message-content message-ai">
+                <div class="message-header">
+                    <span class="message-label">Tutor Inteligente (Multi-Agente)</span>
+                </div>
+                <div class="agent-collaboration-container">
+                    <div class="agent-steps">
+                        <div class="agent-step" id="${loadingId}-step-router">
+                            <div class="step-icon-wrapper">
+                                <span class="step-number">R</span>
+                                <div class="step-spinner"></div>
+                            </div>
+                            <span class="step-name">Router</span>
+                        </div>
+                        <div class="agent-line" id="${loadingId}-line-1"></div>
+                        <div class="agent-step" id="${loadingId}-step-tecnico">
+                            <div class="step-icon-wrapper">
+                                <span class="step-number">T</span>
+                                <div class="step-spinner"></div>
+                            </div>
+                            <span class="step-name">Técnico</span>
+                        </div>
+                        <div class="agent-line" id="${loadingId}-line-2"></div>
+                        <div class="agent-step" id="${loadingId}-step-pedagogico">
+                            <div class="step-icon-wrapper">
+                                <span class="step-number">P</span>
+                                <div class="step-spinner"></div>
+                            </div>
+                            <span class="step-name">Pedagógico</span>
+                        </div>
+                        <div class="agent-line" id="${loadingId}-line-3"></div>
+                        <div class="agent-step" id="${loadingId}-step-socratico">
+                            <div class="step-icon-wrapper">
+                                <span class="step-number">S</span>
+                                <div class="step-spinner"></div>
+                            </div>
+                            <span class="step-name">Socrático</span>
+                        </div>
+                    </div>
+                    <div class="agent-status" id="${loadingId}-status">Orquestrando agentes y analizando contexto...</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function animateAgentCollaboration(loadingId) {
+    const states = [
+        {
+            step: 'router',
+            status: 'Router: Analizando consulta y contexto del alumno...',
+            duration: 1000
+        },
+        {
+            step: 'tecnico',
+            status: 'Agente Técnico: Inspeccionando código y diagnóstico de errores...',
+            duration: 1500
+        },
+        {
+            step: 'pedagogico',
+            status: 'Agente Pedagógico: Correlacionando con el sílabo y teoría...',
+            duration: 1500
+        },
+        {
+            step: 'socratico',
+            status: 'Agente Socrático: Diseñando pista y retroalimentación guiada...',
+            duration: 100000
+        }
+    ];
+
+    let currentIdx = 0;
+    
+    function transitionNext() {
+        const mainContainer = document.getElementById(loadingId);
+        if (!mainContainer) return;
+
+        const current = states[currentIdx];
+        if (!current) return;
+
+        const statusElem = document.getElementById(`${loadingId}-status`);
+        if (statusElem) {
+            statusElem.textContent = current.status;
+        }
+
+        const stepElem = document.getElementById(`${loadingId}-step-${current.step}`);
+        if (stepElem) {
+            states.forEach(s => {
+                const el = document.getElementById(`${loadingId}-step-${s.step}`);
+                if (el) el.classList.remove('active');
+            });
+            stepElem.classList.add('active');
+        }
+
+        for (let i = 0; i < currentIdx; i++) {
+            const prevStep = states[i].step;
+            const prevStepElem = document.getElementById(`${loadingId}-step-${prevStep}`);
+            if (prevStepElem) {
+                prevStepElem.classList.add('completed');
+                prevStepElem.classList.remove('active');
+            }
+            const lineElem = document.getElementById(`${loadingId}-line-${i + 1}`);
+            if (lineElem) {
+                lineElem.classList.add('completed');
+            }
+        }
+
+        if (currentIdx < states.length - 1) {
+            currentIdx++;
+            setTimeout(() => {
+                transitionNext();
+            }, current.duration);
+        }
+    }
+
+    setTimeout(transitionNext, 0);
 }
