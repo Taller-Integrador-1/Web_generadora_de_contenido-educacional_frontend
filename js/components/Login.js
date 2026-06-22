@@ -149,7 +149,7 @@ function createRegisterFormFields() {
                     id="reg-password" 
                     class="login-input" 
                     placeholder="Mayúscula, minúscula, número y símbolo" 
-                    pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+={}\\[\\]:;\\\"'<>,.?~\\\\/-]).{8,}"
+                    pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':,./?~|]).{8,}"
                     title="La contraseña debe tener al menos 8 caracteres, e incluir una mayúscula, una minúscula, un número y un carácter especial."
                     required
                 />
