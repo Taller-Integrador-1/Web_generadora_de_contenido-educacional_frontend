@@ -28,8 +28,8 @@ function createCodeEditor() {
                         </div>
                         <div class="meta-separator"></div>
                         <select id="language-selector" onchange="changeLanguage()" class="editor-select">
+                            <option value="java" selected>Java</option>
                             <option value="python">Python</option>
-                            <option value="java">Java</option>
                         </select>
                         <div id="exercise-select-wrapper" style="margin-left: 0.5rem; display: none;">
                             <select id="exercise-selector" onchange="selectExercise(this.value)" class="editor-select">
@@ -113,8 +113,8 @@ function initCodeEditor() {
     if (!container) return;
 
     codeEditorInstance = CodeMirror(container, {
-        value: initialSnippets.python,
-        mode: "python",
+        value: initialSnippets.java,
+        mode: "text/x-java",
         theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dracula' : 'default',
         lineNumbers: true,
         indentUnit: 4,

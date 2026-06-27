@@ -38,13 +38,12 @@ function createTutorPanel() {
                     <div class="input-icon">
                         ${Icons.sparkles}
                     </div>
-                    <input
-                        type="text"
+                    <textarea
                         class="reflection-input"
                         placeholder="Escribe tu reflexión aquí..."
                         id="reflection-input"
-                        onkeypress="handleKeyPress(event)"
-                    />
+                        onkeydown="handleKeyPress(event)"
+                    ></textarea>
                     <button class="send-button" onclick="sendMessage()">
                         ${Icons.send}
                     </button>
@@ -60,16 +59,16 @@ async function loadChatHistory() {
     try {
         const response = await fetch(`${API_BASE_URL}/api/chat/history/${AppState.usuario_id}`);
         if (!response.ok) throw new Error('No se pudo obtener el historial de chat');
-        
+
         const data = await response.json();
         difyConversationId = data.dify_conversation_id;
-        
+
         if (data.mensajes && data.mensajes.length > 0) {
             chatHistory = data.mensajes.map(m => ({
                 type: m.rol === 'assistant' ? 'ai' : 'user',
                 text: m.contenido
             }));
-            
+
             const chatMessagesContainer = document.getElementById('chat-messages');
             if (chatMessagesContainer) {
                 chatMessagesContainer.innerHTML = chatHistory.map(msg => createChatMessage(msg)).join('');
@@ -88,7 +87,7 @@ function renderTutorPanel() {
     initResizer(panelElement);
     initToggle(panelElement);
     scrollToBottom();
-    
+
     loadChatHistory();
 }
 
@@ -106,8 +105,9 @@ function initResizer(panelElement) {
         if (!isResizing) return;
 
         const newWidth = window.innerWidth - e.clientX;
+        const maxTutorWidth = window.innerWidth - 288;
 
-        if (newWidth >= 300 && newWidth <= 600) {
+        if (newWidth >= 300 && newWidth <= maxTutorWidth) {
             panelElement.style.setProperty('--tutor-width', `${newWidth}px`);
         }
     });
@@ -144,7 +144,10 @@ function scrollToBottom() {
 
 function handleKeyPress(event) {
     if (event.key === 'Enter') {
-        sendMessage();
+        if (!event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
     }
 }
 
@@ -196,7 +199,7 @@ async function sendMessage() {
 
         document.getElementById(loadingId).remove();
 
-        const aiMsg = { type: 'ai', text: data.respuesta };
+        const aiMsg = { type: 'ai', text: data.respuesta, agentName: data.agente_nombre };
         chatHistory.push(aiMsg);
         chatMessagesContainer.insertAdjacentHTML('beforeend', createChatMessage(aiMsg));
 
@@ -205,7 +208,7 @@ async function sendMessage() {
 
         document.getElementById(loadingId).remove();
 
-        const errorMsg = { type: 'ai', text: 'Lo siento, hubo un error al conectar con el servidor. Verifica que el backend esté corriendo en localhost:8000 y tenga configurada la API Key.' };
+        const errorMsg = { type: 'ai', text: 'Lo siento, hubo un error al conectar con el servidor.' };
         chatMessagesContainer.insertAdjacentHTML('beforeend', createChatMessage(errorMsg));
     } finally {
         input.disabled = false;
@@ -257,7 +260,7 @@ async function sendAutomatedTutorMessage(text, visibleUserText) {
         const loadingElem = document.getElementById(loadingId);
         if (loadingElem) loadingElem.remove();
 
-        const aiMsg = { type: 'ai', text: data.respuesta };
+        const aiMsg = { type: 'ai', text: data.respuesta, agentName: data.agente_nombre };
         chatHistory.push(aiMsg);
         chatMessagesContainer.insertAdjacentHTML('beforeend', createChatMessage(aiMsg));
 
@@ -279,118 +282,14 @@ function getAgentLoadingHTML(loadingId) {
             <div class="message-avatar avatar-ai">
                 ${Icons.brain}
             </div>
-            <div class="message-content message-ai">
-                <div class="message-header">
-                    <span class="message-label">Tutor Inteligente (Multi-Agente)</span>
-                </div>
-                <div class="agent-collaboration-container">
-                    <div class="agent-steps">
-                        <div class="agent-step" id="${loadingId}-step-router">
-                            <div class="step-icon-wrapper">
-                                <span class="step-number">R</span>
-                                <div class="step-spinner"></div>
-                            </div>
-                            <span class="step-name">Router</span>
-                        </div>
-                        <div class="agent-line" id="${loadingId}-line-1"></div>
-                        <div class="agent-step" id="${loadingId}-step-tecnico">
-                            <div class="step-icon-wrapper">
-                                <span class="step-number">T</span>
-                                <div class="step-spinner"></div>
-                            </div>
-                            <span class="step-name">Técnico</span>
-                        </div>
-                        <div class="agent-line" id="${loadingId}-line-2"></div>
-                        <div class="agent-step" id="${loadingId}-step-pedagogico">
-                            <div class="step-icon-wrapper">
-                                <span class="step-number">P</span>
-                                <div class="step-spinner"></div>
-                            </div>
-                            <span class="step-name">Pedagógico</span>
-                        </div>
-                        <div class="agent-line" id="${loadingId}-line-3"></div>
-                        <div class="agent-step" id="${loadingId}-step-socratico">
-                            <div class="step-icon-wrapper">
-                                <span class="step-number">S</span>
-                                <div class="step-spinner"></div>
-                            </div>
-                            <span class="step-name">Socrático</span>
-                        </div>
-                    </div>
-                    <div class="agent-status" id="${loadingId}-status">Orquestrando agentes y analizando contexto...</div>
-                </div>
+            <div class="message-content message-ai" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--bg-tertiary); max-width: max-content;">
+                <div class="chat-spinner"></div>
+                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-primary);">Pensando...</span>
             </div>
         </div>
     `;
 }
 
 function animateAgentCollaboration(loadingId) {
-    const states = [
-        {
-            step: 'router',
-            status: 'Router: Analizando consulta y contexto del alumno...',
-            duration: 1000
-        },
-        {
-            step: 'tecnico',
-            status: 'Agente Técnico: Inspeccionando código y diagnóstico de errores...',
-            duration: 1500
-        },
-        {
-            step: 'pedagogico',
-            status: 'Agente Pedagógico: Correlacionando con el sílabo y teoría...',
-            duration: 1500
-        },
-        {
-            step: 'socratico',
-            status: 'Agente Socrático: Diseñando pista y retroalimentación guiada...',
-            duration: 100000
-        }
-    ];
 
-    let currentIdx = 0;
-    
-    function transitionNext() {
-        const mainContainer = document.getElementById(loadingId);
-        if (!mainContainer) return;
-
-        const current = states[currentIdx];
-        if (!current) return;
-
-        const statusElem = document.getElementById(`${loadingId}-status`);
-        if (statusElem) {
-            statusElem.textContent = current.status;
-        }
-
-        const stepElem = document.getElementById(`${loadingId}-step-${current.step}`);
-        if (stepElem) {
-            states.forEach(s => {
-                const el = document.getElementById(`${loadingId}-step-${s.step}`);
-                if (el) el.classList.remove('active');
-            });
-            stepElem.classList.add('active');
-        }
-
-        for (let i = 0; i < currentIdx; i++) {
-            const prevStep = states[i].step;
-            const prevStepElem = document.getElementById(`${loadingId}-step-${prevStep}`);
-            if (prevStepElem) {
-                prevStepElem.classList.add('completed');
-                prevStepElem.classList.remove('active');
-            }
-            const lineElem = document.getElementById(`${loadingId}-line-${i + 1}`);
-            if (lineElem) {
-                lineElem.classList.add('completed');
-            }
-        }
-
-        if (currentIdx < states.length - 1) {
-            currentIdx++;
-            setTimeout(() => {
-                transitionNext();
-            }, current.duration);
-        }
-    }
-
-    setTimeout(transitionNext, 0);
 }

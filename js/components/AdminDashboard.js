@@ -162,31 +162,20 @@ function createAdminSyllabusView() {
                 </form>
             </div>
 
-            <!-- Visor de Sílabo Activo y Materiales de Dify -->
+            <!-- Materiales de Dify (Dify RAG) -->
             <div class="admin-panel-card" style="padding: 1.5rem; background: var(--stats-card-bg); border-radius: 1rem; border: 1px solid var(--stats-card-border); box-shadow: var(--stats-card-shadow); transition: background 0.3s, border-color 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; gap: 1.5rem;">
-                <div>
+                <div style="display: flex; flex-direction: column; min-height: 0; height: 100%;">
                     <div class="admin-panel-card-header" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; transition: border-color 0.3s;">
                         <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s; display: flex; align-items: center; gap: 0.5rem;">
-                            ${Icons.fileCode || Icons.code}
-                            <span>Sílabo Activo en Sistema</span>
-                        </h3>
-                    </div>
-                    <div id="syllabus-viewer-container" style="display: flex; flex-direction: column; min-height: 0;">
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.3;" id="syllabus-viewer-meta">Cargando información del sílabo...</p>
-                        <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1rem; font-family: monospace; font-size: 0.8rem; overflow-y: auto; white-space: pre-wrap; color: var(--text-primary); height: 160px; max-height: 160px;" id="syllabus-viewer-text">
-                            No se ha cargado ningún sílabo en el sistema.
-                        </div>
-                    </div>
-                </div>
-
-                <div style="border-top: 1px solid var(--border-light); padding-top: 1rem; display: flex; flex-direction: column; min-height: 0;">
-                    <div class="admin-panel-card-header" style="margin-bottom: 1rem; padding-bottom: 0.5rem;">
-                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); transition: color 0.3s; display: flex; align-items: center; gap: 0.5rem;">
-                            ${Icons.brain || ''}
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #6366f1;">
+                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                                <path d="M12 6v12"></path>
+                                <path d="M8 10h8"></path>
+                            </svg>
                             <span>Materiales en Conocimiento (Dify RAG)</span>
                         </h3>
                     </div>
-                    <div id="dify-docs-container" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 250px; overflow-y: auto; padding-right: 0.25rem;">
+                    <div id="dify-docs-container" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 420px; overflow-y: auto; padding-right: 0.25rem;">
                         <p style="font-size: 0.85rem; color: var(--text-muted);">Cargando documentos de Dify...</p>
                     </div>
                 </div>
@@ -672,7 +661,148 @@ function renderDifyDocuments(documents) {
                     <div><strong>Búsquedas (Hits):</strong> ${hitCount}</div>
                     <div style="grid-column: span 2;"><strong>Cargado:</strong> ${createdDate}</div>
                 </div>
+                
+                <div style="display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 0.5rem; margin-top: 0.2rem;">
+                    <button onclick="viewDifyDocumentContent('${doc.id}', '${doc.name.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; gap: 0.25rem; padding: 0.35rem 0.75rem; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border: none; border-radius: 0.375rem; font-weight: 600; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; outline: none; box-shadow: 0 2px 4px rgba(99,102,241,0.15);" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='none';">
+                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                             <circle cx="12" cy="12" r="3"></circle>
+                         </svg>
+                         <span>Visualizar</span>
+                    </button>
+                </div>
             </div>
         `;
     }).join('');
+}
+
+async function viewDifyDocumentContent(docId, docName) {
+    const existingOverlay = document.getElementById('doc-viewer-overlay');
+    if (existingOverlay) existingOverlay.remove();
+
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'doc-viewer-overlay';
+    loadingOverlay.style = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 12, 30, 0.75); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 99999; animation: fadeIn 0.2s ease-out;';
+    loadingOverlay.innerHTML = `
+        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1.25rem; padding: 2rem 3rem; text-align: center; color: var(--text-primary); box-shadow: var(--card-shadow); display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+            <div class="pulse-animation" style="color: #6366f1;">
+                <svg class="animate-spin" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="2" x2="12" y2="6"></line>
+                    <line x1="12" y1="18" x2="12" y2="22"></line>
+                    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+                    <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+                    <line x1="2" y1="12" x2="6" y2="12"></line>
+                    <line x1="18" y1="12" x2="22" y2="12"></line>
+                    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+                    <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+                </svg>
+            </div>
+            <div style="font-weight: 700; font-size: 0.95rem;">Preparando visualización del documento...</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">${docName}</div>
+        </div>
+    `;
+    document.body.appendChild(loadingOverlay);
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/dify-documents/${docId}/content`);
+        if (!response.ok) throw new Error('Error al obtener información de Dify');
+        const data = await response.json();
+        
+        loadingOverlay.remove();
+        showDocumentViewerModal(docName, data.content, docId, data.has_binary);
+    } catch (error) {
+        console.error(error);
+        loadingOverlay.innerHTML = `
+            <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1.25rem; padding: 2rem; text-align: center; color: var(--text-primary); box-shadow: var(--card-shadow); display: flex; flex-direction: column; align-items: center; gap: 1rem; max-width: 400px;">
+                <div style="color: #ef4444;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <div style="font-weight: 700;">Error al Cargar Visor</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">${error.message}</div>
+                <button onclick="document.getElementById('doc-viewer-overlay').remove()" style="margin-top: 0.5rem; padding: 0.5rem 1.5rem; background: var(--border-color); color: var(--text-primary); border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+                    Cerrar
+                </button>
+            </div>
+        `;
+    }
+}
+
+function showDocumentViewerModal(docName, content, docId, hasBinary) {
+    const existing = document.getElementById('doc-viewer-overlay');
+    if (existing) existing.remove();
+
+    const isPDF = docName.toLowerCase().endsWith('.pdf');
+    let viewerBodyHTML = '';
+
+    if (hasBinary && isPDF) {
+        viewerBodyHTML = `
+            <div style="flex: 1; width: 100%; height: 100%; overflow: hidden; background: var(--bg-primary);">
+                <iframe src="${API_BASE_URL}/api/admin/dify-documents/${docId}/view" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        `;
+    } else {
+        const formattedContent = content 
+            ? content.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') 
+            : '<p style="text-align: center; color: var(--text-muted); font-style: italic; padding-top: 3rem;">El documento está vacío o no contiene texto legible.</p>';
+        
+        viewerBodyHTML = `
+            <div style="flex: 1; overflow-y: auto; background: var(--bg-primary); padding: 3rem 2rem; display: flex; justify-content: center;">
+                <div style="background: var(--stats-card-bg); border: 1px solid var(--stats-card-border); width: 100%; max-width: 780px; min-height: 297mm; border-radius: 0.5rem; box-shadow: 0 8px 30px rgba(0,0,0,0.06); padding: 3rem 4rem; box-sizing: border-box; color: var(--text-primary); transition: background 0.3s, border-color 0.3s, color 0.3s; font-family: 'Outfit', 'Inter', sans-serif; font-size: 0.95rem; line-height: 1.7; word-wrap: break-word;">
+                    ${formattedContent}
+                </div>
+            </div>
+        `;
+    }
+
+    const modalHTML = `
+        <div id="doc-viewer-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 12, 30, 0.85); backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; animation: fadeIn 0.25s ease-out; padding: 2rem; box-sizing: border-box;">
+            <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); width: 100%; max-width: 1000px; height: 100%; max-height: 92vh; border-radius: 1.25rem; display: flex; flex-direction: column; box-shadow: var(--card-shadow); color: var(--text-primary); animation: scaleIn 0.25s ease-out; overflow: hidden;">
+                
+                <!-- Modal Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding: 1.25rem 2rem; background: var(--bg-tertiary); flex-shrink: 0;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 0;">
+                        <div style="color: #6366f1; flex-shrink: 0;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </div>
+                        <h2 style="font-size: 1.15rem; font-weight: 800; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.3px;" title="${docName}">${docName}</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        ${hasBinary ? `
+                        <a href="${API_BASE_URL}/api/admin/dify-documents/${docId}/view" download="${docName}" style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.9rem; background: #6366f1; color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 700; font-size: 0.8rem; transition: background 0.2s; box-shadow: 0 2px 4px rgba(99,102,241,0.25);" onmouseover="this.style.background='#4f46e5';" onmouseout="this.style.background='#6366f1';">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Descargar</span>
+                        </a>
+                        ` : ''}
+                        <button onclick="document.getElementById('doc-viewer-overlay').remove()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; transition: all 0.2s;" onmouseover="this.style.background='var(--border-color)'; this.style.color='var(--text-primary)';" onmouseout="this.style.background='none'; this.style.color='var(--text-muted)';">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Viewport -->
+                ${viewerBodyHTML}
+                
+                <!-- Modal Footer -->
+                <div style="display: flex; justify-content: center; align-items: center; border-top: 1px solid var(--border-color); padding: 0.75rem 2rem; background: var(--bg-tertiary); font-size: 0.75rem; color: var(--text-muted); flex-shrink: 0;">
+                    <span>Lector de Documentos RAG de Sílabo UPAO</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
 }

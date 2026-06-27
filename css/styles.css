@@ -836,7 +836,7 @@ body {
     height: 100%;
     width: var(--tutor-width, 420px);
     min-width: 300px;
-    max-width: 600px;
+    max-width: calc(100vw - 288px);
     z-index: 100;
     border-left: 1px solid var(--tutor-panel-border);
     background: var(--tutor-panel-bg);
@@ -1217,7 +1217,7 @@ body {
 
 .reflection-input {
     width: 100%;
-    padding: 1rem 3.5rem 1rem 3rem;
+    padding: 0.75rem 3.5rem 0.75rem 3rem;
     border: 2px solid var(--tutor-input-border);
     border-radius: 0.75rem;
     background: var(--tutor-input-bg);
@@ -1226,6 +1226,11 @@ body {
     font-weight: 500;
     font-family: inherit;
     transition: all 0.3s ease;
+    resize: none;
+    height: 48px;
+    line-height: 1.4;
+    overflow-y: auto;
+    display: block;
 }
 
 .reflection-input:focus {
@@ -2031,4 +2036,100 @@ body {
     margin-top: 0.25rem;
     padding-left: 0.5rem;
     border-left: 2px solid rgba(99, 102, 241, 0.5);
+}
+
+/* ==================== MARKDOWN BODY STYLES ==================== */
+.message-text.markdown-body {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+
+.message-text.markdown-body p {
+    margin: 0 0 0.75rem 0;
+}
+
+.message-text.markdown-body p:last-child {
+    margin-bottom: 0;
+}
+
+.message-text.markdown-body ul, 
+.message-text.markdown-body ol {
+    margin: 0 0 0.75rem 0;
+    padding-left: 1.25rem;
+}
+
+.message-text.markdown-body li {
+    margin-bottom: 0.25rem;
+}
+
+.message-text.markdown-body strong {
+    color: #a855f7; /* Purple accent for bold terms */
+    font-weight: 700;
+}
+
+.message-text.markdown-body code {
+    background: rgba(99, 102, 241, 0.1);
+    color: #818cf8;
+    padding: 0.15rem 0.35rem;
+    border-radius: 0.25rem;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 0.85em;
+}
+
+.message-text.markdown-body pre {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 0.75rem 0;
+}
+
+.message-text.markdown-body pre code {
+    background: none;
+    color: var(--text-primary);
+    padding: 0;
+    font-size: 0.8rem;
+}
+
+.message-text.markdown-body h1,
+.message-text.markdown-body h2,
+.message-text.markdown-body h3 {
+    margin: 1rem 0 0.5rem 0;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.message-text.markdown-body h3 {
+    font-size: 0.95rem;
+}
+
+/* ==================== GOOGLE LOGIN BUTTON ==================== */
+.google-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.google-login-btn:hover {
+    background: var(--bg-tertiary) !important;
+    border-color: #6366f1 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.google-login-btn:active {
+    transform: translateY(0);
 }
