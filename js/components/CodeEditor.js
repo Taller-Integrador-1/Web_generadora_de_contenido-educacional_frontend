@@ -45,7 +45,7 @@ function createCodeEditor() {
                     ${Icons.play}
                     <span>Ejecutar Código</span>
                 </button>
-                <button class="btn-validate" id="btn-validate-ia" onclick="validateCodeWithIA()" style="display: none; background: linear-gradient(to right, #6366f1, #a855f7); color: white; border: none; padding: 0.5rem 1.25rem; border-radius: 0.375rem; font-weight: 700; cursor: pointer; align-items: center; justify-content: center; gap: 0.35rem; transition: transform 0.2s;">
+                <button class="btn-validate" id="btn-validate-ia" onclick="validateCodeWithIA()" style="display: none; background: #4f46e5; color: white; border: none; padding: 0.5rem 1.25rem; border-radius: 0.375rem; font-weight: 700; cursor: pointer; align-items: center; justify-content: center; gap: 0.35rem; transition: transform 0.2s;">
                     ${Icons.sparkles}
                     <span>Validar con IA</span>
                 </button>
@@ -202,6 +202,10 @@ async function loadExercisesForTopic(topicTitle) {
 
 function loadChallenge(exercise) {
     activeExercise = exercise;
+
+    if (typeof resetHintCounter === 'function') {
+        resetHintCounter();
+    }
 
     const titleElem = document.getElementById('current-reto-title');
     if (titleElem) titleElem.innerText = `Reto: ${exercise.titulo}`;

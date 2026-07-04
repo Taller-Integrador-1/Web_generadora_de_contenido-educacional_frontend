@@ -1,5 +1,6 @@
 let difyConversationId = null;
 let chatHistory = [];
+let hintCount = 0;
 
 
 function createTutorPanel() {
@@ -34,6 +35,12 @@ function createTutorPanel() {
             </div>
 
             <div class="input-area">
+                <button class="tutor-hint-btn" id="tutor-hint-btn" onclick="requestHintAction()">
+                    <span style="display: flex; align-items: center; justify-content: center; width: 16px; height: 16px;">
+                        ${Icons.lightbulb}
+                    </span>
+                    <span>Pedir Pista (Costo: <span id="hint-xp-cost">25</span> XP)</span>
+                </button>
                 <div class="input-wrapper">
                     <div class="input-icon">
                         ${Icons.sparkles}
@@ -89,6 +96,7 @@ function renderTutorPanel() {
     scrollToBottom();
 
     loadChatHistory();
+    updateHintButtonUI();
 }
 
 function initResizer(panelElement) {
@@ -96,9 +104,12 @@ function initResizer(panelElement) {
     let isResizing = false;
 
     resizer.addEventListener('mousedown', (e) => {
+        e.preventDefault();
         isResizing = true;
         resizer.classList.add('dragging');
         document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        document.body.style.webkitUserSelect = 'none';
     });
 
     document.addEventListener('mousemove', (e) => {
@@ -117,6 +128,8 @@ function initResizer(panelElement) {
             isResizing = false;
             resizer.classList.remove('dragging');
             document.body.style.cursor = 'default';
+            document.body.style.userSelect = '';
+            document.body.style.webkitUserSelect = '';
         }
     });
 }
@@ -292,4 +305,84 @@ function getAgentLoadingHTML(loadingId) {
 
 function animateAgentCollaboration(loadingId) {
 
+}
+
+function resetHintCounter() {
+    hintCount = 0;
+    updateHintButtonUI();
+}
+
+function updateHintButtonUI() {
+    const cost = getHintCost();
+    const costElem = document.getElementById('hint-xp-cost');
+    if (costElem) {
+        costElem.innerText = cost;
+    }
+    const hintBtn = document.getElementById('tutor-hint-btn');
+    if (hintBtn) {
+        const hasActive = (typeof activeExercise !== 'undefined' && activeExercise);
+        if (!hasActive) {
+            hintBtn.disabled = true;
+            hintBtn.title = 'Selecciona un reto para pedir pistas';
+        } else {
+            hintBtn.disabled = false;
+            hintBtn.title = '';
+        }
+    }
+}
+
+function getHintCost() {
+    return (hintCount + 1) * 25;
+}
+
+async function requestHintAction() {
+    const hasActive = (typeof activeExercise !== 'undefined' && activeExercise);
+    if (!hasActive) {
+        alert('Por favor selecciona un reto primero.');
+        return;
+    }
+    
+    const cost = getHintCost();
+    if (AppState.totalXP < cost) {
+        alert(`No tienes suficiente XP para pedir esta pista. Costo: ${cost} XP, tienes: ${AppState.totalXP} XP.`);
+        return;
+    }
+    
+    const confirmDeduct = confirm(`Pedir una pista costará ${cost} XP y podría afectar tu nivel si bajas de rango. ¿Deseas continuar?`);
+    if (!confirmDeduct) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/usuario/descontar-xp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuario_id: AppState.usuario_id,
+                descuento_xp: cost
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error al descontar XP');
+        }
+        
+        const data = await response.json();
+        
+        reloadStudentStats({
+            xp: data.xp,
+            nivel: data.nivel,
+            porcentaje: AppState.porcentaje,
+            tema_actual: AppState.tema_actual
+        });
+        
+        hintCount++;
+        updateHintButtonUI();
+        
+        const promptMsg = `Tengo dificultades con el reto "${activeExercise.titulo}" en el tema "${AppState.tema_actual}". ¿Me das una pista (pista #${hintCount}) sobre cómo abordar este problema?`;
+        
+        await sendAutomatedTutorMessage(promptMsg, `Solicito pista #${hintCount} (-${cost} XP)`);
+        
+    } catch (e) {
+        console.error('Error al pedir pista:', e);
+        alert('Hubo un error al procesar el descuento de XP. Por favor intenta de nuevo.');
+    }
 }
