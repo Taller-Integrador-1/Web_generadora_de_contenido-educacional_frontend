@@ -198,7 +198,8 @@ async function sendMessage() {
                 dify_conversation_id: difyConversationId,
                 ejercicio_titulo: (typeof activeExercise !== 'undefined' && activeExercise) ? activeExercise.titulo : null,
                 ejercicio_descripcion: (typeof activeExercise !== 'undefined' && activeExercise) ? activeExercise.descripcion : null,
-                codigo_alumno: (typeof codeEditorInstance !== 'undefined' && codeEditorInstance) ? codeEditorInstance.getValue() : null
+                codigo_alumno: (typeof codeEditorInstance !== 'undefined' && codeEditorInstance) ? codeEditorInstance.getValue() : null,
+                pista_numero: null
             })
         });
 
@@ -230,7 +231,7 @@ async function sendMessage() {
     }
 }
 
-async function sendAutomatedTutorMessage(text, visibleUserText) {
+async function sendAutomatedTutorMessage(text, visibleUserText, pistaNumero = null) {
     const chatMessagesContainer = document.getElementById('chat-messages');
     if (!chatMessagesContainer) return;
 
@@ -259,7 +260,8 @@ async function sendAutomatedTutorMessage(text, visibleUserText) {
                 dify_conversation_id: difyConversationId,
                 ejercicio_titulo: (typeof activeExercise !== 'undefined' && activeExercise) ? activeExercise.titulo : null,
                 ejercicio_descripcion: (typeof activeExercise !== 'undefined' && activeExercise) ? activeExercise.descripcion : null,
-                codigo_alumno: (typeof codeEditorInstance !== 'undefined' && codeEditorInstance) ? codeEditorInstance.getValue() : null
+                codigo_alumno: (typeof codeEditorInstance !== 'undefined' && codeEditorInstance) ? codeEditorInstance.getValue() : null,
+                pista_numero: pistaNumero
             })
         });
 
@@ -332,7 +334,9 @@ function updateHintButtonUI() {
 }
 
 function getHintCost() {
-    return (hintCount + 1) * 25;
+    if (hintCount === 0) return 25;
+    if (hintCount === 1) return 50;
+    return 100;
 }
 
 async function requestHintAction() {
@@ -379,7 +383,7 @@ async function requestHintAction() {
         
         const promptMsg = `Tengo dificultades con el reto "${activeExercise.titulo}" en el tema "${AppState.tema_actual}". ¿Me das una pista (pista #${hintCount}) sobre cómo abordar este problema?`;
         
-        await sendAutomatedTutorMessage(promptMsg, `Solicito pista #${hintCount} (-${cost} XP)`);
+        await sendAutomatedTutorMessage(promptMsg, `Solicito pista #${hintCount} (-${cost} XP)`, hintCount);
         
     } catch (e) {
         console.error('Error al pedir pista:', e);
