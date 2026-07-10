@@ -200,6 +200,15 @@ async function handleAuthSubmit(event) {
             const username = document.getElementById('login-username').value.trim();
             const contrasena = document.getElementById('login-password').value;
 
+            if (/^\d+$/.test(username)) {
+                if (username.length !== 9) {
+                    throw new Error('El código de estudiante debe constar de exactamente 9 dígitos.');
+                }
+                if (/^(\d)\1{8}$/.test(username)) {
+                    throw new Error('El código de estudiante no puede estar formado por el mismo dígito repetido.');
+                }
+            }
+
             const response = await fetch(`${API_BASE_URL}/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -238,6 +247,9 @@ async function handleAuthSubmit(event) {
 
             if (!/^\d{9}$/.test(code)) {
                 throw new Error('El código de estudiante debe constar de exactamente 9 dígitos numéricos.');
+            }
+            if (/^(\d)\1{8}$/.test(code)) {
+                throw new Error('El código de estudiante no puede estar formado por el mismo dígito repetido.');
             }
 
             if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(name)) {

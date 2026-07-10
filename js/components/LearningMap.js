@@ -54,19 +54,14 @@ function createCircularProgress(percentage) {
                     cx="35"
                     cy="35"
                     r="${radius}"
-                    stroke="url(#progress-gradient)"
+                    stroke="#2563eb"
                     stroke-width="5"
                     stroke-dasharray="${circumference}"
                     stroke-dashoffset="${offset}"
                     stroke-linecap="round"
                     fill="transparent"
                 />
-                <defs>
-                    <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#6366f1" />
-                        <stop offset="100%" stop-color="#a855f7" />
-                    </linearGradient>
-                </defs>
+
             </svg>
             <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;">
                 <span style="font-size: 0.9rem; font-weight: 800; color: #1f2937;">${percentage}%</span>
@@ -82,13 +77,13 @@ function createLearningMap() {
     return `
         <div class="skill-tree-container" style="margin-top: 0;">
             ${(AppState.userLevel === 1 && AppState.totalXP === 0) ? `
-                <div class="exam-banner animate-fade-in" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 1rem; padding: 1rem; margin-bottom: 1.5rem; text-align: center; box-shadow: var(--card-shadow); transition: background 0.3s, border-color 0.3s;">
-                    <div style="font-weight: 700; color: #6366f1; margin-bottom: 0.25rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; font-size: 0.85rem;">
+                <div class="exam-banner animate-fade-in" style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 1rem; padding: 1rem; margin-bottom: 1.5rem; text-align: center; box-shadow: var(--card-shadow); transition: background 0.3s, border-color 0.3s;">
+                    <div style="font-weight: 700; color: #2563eb; margin-bottom: 0.25rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; font-size: 0.85rem;">
                         ${Icons.award || ''}
                         <span>Examen de Diagnóstico</span>
                     </div>
                     <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.3;">¿Ya sabes programar? Toma un test teórico y desbloquea temas avanzados.</p>
-                    <button onclick="openDiagnosticExam()" style="background: linear-gradient(to right, #6366f1, #9333ea); color: white; border: none; border-radius: 0.5rem; padding: 0.45rem 1rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: transform 0.2s; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.25rem; outline: none;">
+                    <button onclick="openDiagnosticExam()" style="background: #2563eb; color: white; border: none; border-radius: 0.5rem; padding: 0.45rem 1rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: transform 0.2s; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.25rem; outline: none;">
                         ${Icons.zap || ''}
                         <span>Iniciar Examen</span>
                     </button>
@@ -98,7 +93,7 @@ function createLearningMap() {
             <div class="skill-tree" style="${activeTopics.length === 0 ? 'display: block; text-align: center;' : ''}">
                 ${activeTopics.length === 0 ? `
                     <div style="padding: 2.5rem 1rem; color: #64748b; font-size: 0.85rem; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 1rem; margin-top: 1rem;">
-                        <div style="color: #6366f1; margin-bottom: 0.5rem;">
+                        <div style="color: #2563eb; margin-bottom: 0.5rem;">
                             ${Icons.sparkles}
                         </div>
                         <p style="font-weight: 700; margin: 0 0 0.25rem 0; color: #1e293b;">No hay retos disponibles</p>
@@ -225,10 +220,10 @@ function showExamQuestionModal() {
                 <!-- Header -->
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="color: #6366f1;">${Icons.award || ''}</span>
+                        <span style="color: #2563eb;">${Icons.award || ''}</span>
                         <span style="font-weight: 800; font-size: 1.1rem;">Examen de Diagnóstico (${currentExamIndex + 1}/${currentExamQuestions.length})</span>
                     </div>
-                    <span style="font-size: 0.75rem; background: rgba(99, 102, 241, 0.1); color: #6366f1; padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-weight: 700;">
+                    <span style="font-size: 0.75rem; background: rgba(37, 99, 235, 0.1); color: #2563eb; padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-weight: 700;">
                         Tema: ${q.tema}
                     </span>
                 </div>
@@ -239,19 +234,19 @@ function showExamQuestionModal() {
                     
                     <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="exam-options-container">
                         <button onclick="selectExamAnswer('A')" class="exam-option-btn" style="text-align: left; padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; background: var(--bg-primary); color: var(--text-primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; gap: 0.75rem; outline: none;">
-                            <span style="color: #6366f1; font-weight: 800;">A.</span>
+                            <span style="color: #2563eb; font-weight: 800;">A.</span>
                             <span>${q.opcion_a}</span>
                         </button>
                         <button onclick="selectExamAnswer('B')" class="exam-option-btn" style="text-align: left; padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; background: var(--bg-primary); color: var(--text-primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; gap: 0.75rem; outline: none;">
-                            <span style="color: #6366f1; font-weight: 800;">B.</span>
+                            <span style="color: #2563eb; font-weight: 800;">B.</span>
                             <span>${q.opcion_b}</span>
                         </button>
                         <button onclick="selectExamAnswer('C')" class="exam-option-btn" style="text-align: left; padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; background: var(--bg-primary); color: var(--text-primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; gap: 0.75rem; outline: none;">
-                            <span style="color: #6366f1; font-weight: 800;">C.</span>
+                            <span style="color: #2563eb; font-weight: 800;">C.</span>
                             <span>${q.opcion_c}</span>
                         </button>
                         <button onclick="selectExamAnswer('D')" class="exam-option-btn" style="text-align: left; padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; background: var(--bg-primary); color: var(--text-primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; gap: 0.75rem; outline: none;">
-                            <span style="color: #6366f1; font-weight: 800;">D.</span>
+                            <span style="color: #2563eb; font-weight: 800;">D.</span>
                             <span>${q.opcion_d}</span>
                         </button>
                     </div>
@@ -275,8 +270,8 @@ function showExamQuestionModal() {
     const btns = document.querySelectorAll('.exam-option-btn');
     btns.forEach(btn => {
         btn.addEventListener('mouseover', () => {
-            btn.style.borderColor = '#6366f1';
-            btn.style.background = 'rgba(99, 102, 241, 0.05)';
+            btn.style.borderColor = '#2563eb';
+            btn.style.background = 'rgba(37, 99, 235, 0.05)';
         });
         btn.addEventListener('mouseout', () => {
             btn.style.borderColor = 'var(--border-color)';
@@ -311,7 +306,7 @@ async function submitExamResults() {
     if (overlay) {
         overlay.innerHTML = `
             <div style="background: var(--card-bg); border: 1px solid var(--border-color); width: 100%; max-width: 450px; border-radius: 1.5rem; padding: 2.5rem; box-shadow: var(--card-shadow); color: var(--text-primary); text-align: center; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
-                <div class="pulse-animation" style="color: #6366f1; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(99, 102, 241, 0.1); border-radius: 50%;">
+                <div class="pulse-animation" style="color: #2563eb; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(37, 99, 235, 0.1); border-radius: 50%;">
                     ${Icons.zap || ''}
                 </div>
                 <div>
@@ -353,15 +348,15 @@ function showExamFeedbackModal(data) {
     let contentHTML = '';
 
     if (data.status === 'success' && data.temas_superados.length > 0) {
-        const temasList = data.temas_superados.map(t => `<span style="background: rgba(16, 185, 129, 0.08); color: #059669; font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 0.5rem; border: 1px solid rgba(16, 185, 129, 0.2);">${t}</span>`).join('');
+        const temasList = data.temas_superados.map(t => `<span style="background: rgba(5, 150, 105, 0.08); color: #059669; font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 0.5rem; border: 1px solid rgba(5, 150, 105, 0.2);">${t}</span>`).join('');
 
         contentHTML = `
             <div style="background: var(--card-bg); border: 1px solid var(--border-color); width: 100%; max-width: 500px; border-radius: 1.5rem; padding: 2.5rem; box-shadow: var(--card-shadow); color: var(--text-primary); text-align: center; display: flex; flex-direction: column; gap: 1.5rem; align-items: center; animation: scaleIn 0.3s ease-out;">
-                <div style="color: #10b981; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: rgba(16, 185, 129, 0.1); border-radius: 50%; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.15);">
+                <div style="color: #059669; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: rgba(5, 150, 105, 0.1); border-radius: 50%; box-shadow: 0 10px 20px rgba(5, 150, 105, 0.15);">
                     ${Icons.award || ''}
                 </div>
                 <div>
-                    <h3 style="font-weight: 800; font-size: 1.4rem; margin-bottom: 0.5rem; color: #10b981;">¡Examen de Ubicación Completado!</h3>
+                    <h3 style="font-weight: 800; font-size: 1.4rem; margin-bottom: 0.5rem; color: #059669;">¡Examen de Ubicación Completado!</h3>
                     <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">Has demostrado competencia en los siguientes temas:</p>
                 </div>
                 
@@ -370,12 +365,13 @@ function showExamFeedbackModal(data) {
                 </div>
 
                 <div style="background: var(--bg-secondary); border: 1px dashed var(--border-color); border-radius: 1rem; padding: 1rem; width: 100%; text-align: left; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem;">
-                    <div><strong>Tema Asignado:</strong> <span style="color: #6366f1; font-weight: 700;">${data.nuevo_tema}</span></div>
+                    <div><strong>Aciertos Obtenidos:</strong> <span style="color: #059669; font-weight: 700;">${data.aciertos !== undefined ? data.aciertos : 0} de ${data.total_preguntas !== undefined ? data.total_preguntas : 0}</span></div>
+                    <div><strong>Tema Asignado:</strong> <span style="color: #2563eb; font-weight: 700;">${data.nuevo_tema}</span></div>
                     <div><strong>Experiencia Obtenida:</strong> <span style="color: #fbbf24; font-weight: 700;">+${data.xp_ganada} XP</span></div>
                     <div><strong>Nivel Académico:</strong> <span style="color: #a855f7; font-weight: 700;">Nivel ${data.nivel}</span></div>
                 </div>
 
-                <button onclick="finishExamAndReload()" style="background: linear-gradient(to right, #10b981, #14b8a6); color: white; border: none; border-radius: 0.75rem; padding: 0.85rem 1.5rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); outline: none;">
+                <button onclick="finishExamAndReload()" style="background: #059669; color: white; border: none; border-radius: 0.75rem; padding: 0.85rem 1.5rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); outline: none;">
                     Ingresar a la Plataforma
                 </button>
             </div>
@@ -391,11 +387,12 @@ function showExamFeedbackModal(data) {
                     <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">Te recomendamos comenzar la ruta desde el primer nivel para consolidar firmemente tus bases en programación.</p>
                 </div>
 
-                <div style="background: var(--bg-secondary); border: 1px dashed var(--border-color); border-radius: 1rem; padding: 1rem; width: 100%; text-align: left; font-size: 0.85rem;">
-                    <strong>Tema Asignado:</strong> <span style="color: #6366f1; font-weight: 700;">Variables</span>
+                <div style="background: var(--bg-secondary); border: 1px dashed var(--border-color); border-radius: 1rem; padding: 1rem; width: 100%; text-align: left; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem;">
+                    <div><strong>Aciertos Obtenidos:</strong> <span style="color: #ef4444; font-weight: 700;">${data.aciertos !== undefined ? data.aciertos : 0} de ${data.total_preguntas !== undefined ? data.total_preguntas : 0}</span></div>
+                    <div><strong>Tema Asignado:</strong> <span style="color: #2563eb; font-weight: 700;">Variables</span></div>
                 </div>
 
-                <button onclick="closeExamModal()" style="background: linear-gradient(to right, #6366f1, #9333ea); color: white; border: none; border-radius: 0.75rem; padding: 0.85rem 1.5rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); outline: none;">
+                <button onclick="closeExamModal()" style="background: #1d4ed8; color: white; border: none; border-radius: 0.75rem; padding: 0.85rem 1.5rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2); outline: none;">
                     Iniciar Aprendizaje
                 </button>
             </div>
@@ -422,7 +419,8 @@ function finishExamAndReload() {
                 nivel: freshUser.nivel,
                 xp: freshUser.xp,
                 tema_actual: freshUser.tema_actual,
-                porcentaje: freshUser.porcentaje
+                porcentaje: freshUser.porcentaje,
+                examen_completado: freshUser.examen_completado
             };
             localStorage.setItem('currentUser', JSON.stringify(localData));
 

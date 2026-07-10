@@ -269,11 +269,28 @@ function loadChallenge(exercise) {
         descBox.style.display = 'none';
     }
 
-    const lang = document.getElementById('language-selector').value;
+    let lang = document.getElementById('language-selector').value;
+    if (exercise.resuelto && exercise.codigo_resuelto && exercise.lenguaje) {
+        lang = exercise.lenguaje;
+        document.getElementById('language-selector').value = lang;
+    }
+
     if (codeEditorInstance) {
-        const code = lang === 'python'
-            ? (exercise.codigo_inicial_python || '# Escribe tu código aquí')
-            : (exercise.codigo_inicial_java || '// Escribe tu código aquí');
+        let code = "";
+        if (exercise.resuelto && exercise.codigo_resuelto && exercise.lenguaje === lang) {
+            code = exercise.codigo_resuelto;
+        } else {
+            code = lang === 'python'
+                ? (exercise.codigo_inicial_python || '# Escribe tu código aquí')
+                : (exercise.codigo_inicial_java || '// Escribe tu código aquí');
+        }
+
+        if (lang === 'java' && code && !code.includes('public static void main')) {
+            code = code.replace(
+                /public class Main\s*\{/,
+                'public class Main {\n    public static void main(String[] args) {\n        // Puedes probar tu código aquí\n    }\n'
+            );
+        }
 
         codeEditorInstance.setValue(code);
 
@@ -342,9 +359,21 @@ function changeLanguage() {
 
     if (codeEditorInstance) {
         if (activeExercise) {
-            const code = lang === 'python'
-                ? (activeExercise.codigo_inicial_python || '# Escribe tu código aquí')
-                : (activeExercise.codigo_inicial_java || '// Escribe tu código aquí');
+            let code = "";
+            if (activeExercise.resuelto && activeExercise.codigo_resuelto && activeExercise.lenguaje === lang) {
+                code = activeExercise.codigo_resuelto;
+            } else {
+                code = lang === 'python'
+                    ? (activeExercise.codigo_inicial_python || '# Escribe tu código aquí')
+                    : (activeExercise.codigo_inicial_java || '// Escribe tu código aquí');
+            }
+
+            if (lang === 'java' && code && !code.includes('public static void main')) {
+                code = code.replace(
+                    /public class Main\s*\{/,
+                    'public class Main {\n    public static void main(String[] args) {\n        // Puedes probar tu código aquí\n    }\n'
+                );
+            }
 
             codeEditorInstance.setValue(code);
         } else {
@@ -598,7 +627,8 @@ async function validateCodeWithIA() {
                 usuario_id: AppState.usuario_id || "UPAO-123",
                 ejercicio_id: activeExercise.id,
                 resolucion_codigo: code,
-                resultado_consola: consoleOutput
+                resultado_consola: consoleOutput,
+                lenguaje: lang
             })
         });
 

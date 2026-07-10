@@ -152,10 +152,10 @@ function createAdminSyllabusView() {
 
                     <div class="login-form-group" style="margin-bottom: 1.5rem;">
                         <label class="admin-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-secondary); font-size: 0.875rem; transition: color 0.3s;">Cantidad de Ejercicios a Generar</label>
-                        <input type="number" id="syllabus-qty" min="1" max="10" value="3" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--stats-input-border); border-radius: 0.5rem; font-size: 0.875rem; background: var(--stats-input-bg); color: var(--stats-input-color); transition: all 0.3s;" />
+                        <input type="number" id="syllabus-qty" min="1" max="15" value="3" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--stats-input-border); border-radius: 0.5rem; font-size: 0.875rem; background: var(--stats-input-bg); color: var(--stats-input-color); transition: all 0.3s;" />
                     </div>
 
-                    <button type="submit" class="admin-btn-save" id="syllabus-upload-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.95rem; font-weight: 700; border-radius: 0.5rem; background: linear-gradient(to right, #4f46e5, #7c3aed); border: none; color: white; cursor: pointer; transition: all 0.2s;">
+                    <button type="submit" class="admin-btn-save" id="syllabus-upload-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.95rem; font-weight: 700; border-radius: 0.5rem; background: #1d4ed8; border: none; color: white; cursor: pointer; transition: all 0.2s;">
                         ${Icons.zap}
                         <span>Subir y Analizar Sílabo</span>
                     </button>

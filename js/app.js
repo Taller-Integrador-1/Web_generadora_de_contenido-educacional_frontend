@@ -61,6 +61,14 @@ function bootstrapApp() {
                 renderTutorPanel();
                 console.log('🎓 Workspace de Estudiante Iniciado');
 
+                if (!user.examen_completado) {
+                    setTimeout(() => {
+                        if (typeof openDiagnosticExam === 'function') {
+                            openDiagnosticExam(true);
+                        }
+                    }, 500);
+                }
+
                 fetch(`${API_BASE_URL}/api/users/${encodeURIComponent(user.usuario_id)}`)
                     .then(res => {
                         if (res.ok) return res.json();
@@ -75,7 +83,8 @@ function bootstrapApp() {
                             nivel: freshUser.nivel,
                             xp: freshUser.xp,
                             tema_actual: freshUser.tema_actual,
-                            porcentaje: freshUser.porcentaje
+                            porcentaje: freshUser.porcentaje,
+                            examen_completado: freshUser.examen_completado
                         };
                         localStorage.setItem('currentUser', JSON.stringify(localData));
 

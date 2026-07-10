@@ -32,11 +32,11 @@
     --editor-container-border: #dfdad0;
     --editor-container-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
     
-    --description-box-bg: rgba(99, 102, 241, 0.03);
-    --description-box-border: rgba(99, 102, 241, 0.08);
+    --description-box-bg: rgba(37, 99, 235, 0.03);
+    --description-box-border: rgba(37, 99, 235, 0.08);
     --description-box-color: #374151;
     --description-text-color: #4b5563;
-    --description-dashed-border: rgba(99, 102, 241, 0.15);
+    --description-dashed-border: rgba(37, 99, 235, 0.15);
     
     --console-bg: #fffdfa;
     --console-border: #cbd5e1;
@@ -57,7 +57,7 @@
     --tutor-input-bg: #f4f1ea;
     --tutor-input-border: #dfdad0;
     --tutor-input-color: #1f2937;
-    --tutor-bubble-user-bg: #4f46e5;
+    --tutor-bubble-user-bg: #1d4ed8;
     --tutor-bubble-user-color: #ffffff;
     --tutor-bubble-assistant-bg: #f4f1ea;
     --tutor-bubble-assistant-color: #1f2937;
@@ -134,7 +134,7 @@
     --tutor-input-bg: #05192d;
     --tutor-input-border: #334155;
     --tutor-input-color: #ffffff;
-    --tutor-bubble-user-bg: #03ef90;
+    --tutor-bubble-user-bg: #059669;
     --tutor-bubble-user-color: #05192d;
     --tutor-bubble-assistant-bg: #1e293b;
     --tutor-bubble-assistant-color: #f8fafc;
@@ -207,12 +207,12 @@ body {
     width: 56px;
     height: 56px;
     border-radius: 1rem;
-    background: #03ef90;
+    background: #059669;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #05192d;
-    box-shadow: 0 4px 12px rgba(3, 239, 144, 0.2);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
 }
 
 .logo-badge {
@@ -293,7 +293,7 @@ body {
 
 .user-level {
     font-size: 0.75rem;
-    color: #6366f1;
+    color: #2563eb;
     font-weight: 500;
 }
 
@@ -301,14 +301,14 @@ body {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #4f46e5;
+    background: #1d4ed8;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-weight: 700;
     font-size: 1rem;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);
 }
 
 /* ==================== LEARNING MAP SIDEBAR ==================== */
@@ -367,7 +367,7 @@ body {
 }
 
 .progress-ring-circle-fill {
-    stroke: #10b981;
+    stroke: #059669;
     fill: none;
     stroke-width: 5;
     stroke-linecap: round;
@@ -385,7 +385,7 @@ body {
 .progress-percentage {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #10b981;
+    color: #059669;
 }
 
 .progress-label {
@@ -459,7 +459,7 @@ body {
 }
 
 .connector-mastered {
-    background: #10b981;
+    background: #059669;
 }
 
 .connector-default {
@@ -490,7 +490,7 @@ body {
 }
 
 .node-selected {
-    box-shadow: 0 0 0 4px #818cf8, 0 10px 25px rgba(99, 102, 241, 0.3) !important;
+    box-shadow: 0 0 0 4px #818cf8, 0 10px 25px rgba(37, 99, 235, 0.3) !important;
     transform: scale(1.08);
 }
 
@@ -503,7 +503,7 @@ body {
 
 .node-available {
     background: white;
-    color: #6366f1;
+    color: #2563eb;
     border-color: #c7d2fe;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -511,25 +511,25 @@ body {
 
 .node-available:hover {
     transform: scale(1.1);
-    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.3);
 }
 
 .node-current {
-    background: #4f46e5;
+    background: #1d4ed8;
     color: white;
-    border-color: #4f46e5;
+    border-color: #1d4ed8;
     transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
     cursor: pointer;
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .node-mastered {
-    background: #10b981;
+    background: #059669;
     color: white;
-    border-color: #10b981;
+    border-color: #059669;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
 }
 
 .node-mastered:hover {
@@ -561,7 +561,7 @@ body {
 
 .node-current+.node-title {
     font-weight: 600;
-    color: #6366f1;
+    color: #2563eb;
 }
 
 /* ==================== CODE EDITOR ==================== */
@@ -595,11 +595,11 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 0.75rem;
-    background: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+    background: #1d4ed8;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);
 }
 
 .editor-title h3 {
@@ -643,7 +643,7 @@ body {
 
 .btn-execute {
     padding: 0.625rem 1.25rem;
-    background: linear-gradient(to right, #10b981, #14b8a6);
+    background: #059669;
     color: white;
     border: none;
     border-radius: 0.75rem;
@@ -653,13 +653,13 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
     transition: all 0.3s ease;
 }
 
 .btn-execute:hover {
-    background: linear-gradient(to right, #059669, #0d9488);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+    background: #047857;
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.6);
     transform: scale(1.05);
 }
 
@@ -697,8 +697,8 @@ body {
 }
 
 .editor-select:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
 .editor-select option {
@@ -878,7 +878,7 @@ body {
 
 .tutor-resizer:hover,
 .tutor-resizer.dragging {
-    background: rgba(99, 102, 241, 0.5);
+    background: rgba(37, 99, 235, 0.5);
 }
 
 .tutor-toggle-btn {
@@ -898,7 +898,7 @@ body {
     cursor: pointer;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
     z-index: 60;
-    color: #6366f1;
+    color: #2563eb;
     transition: all 0.3s ease;
 }
 
@@ -930,11 +930,11 @@ body {
     width: 44px;
     height: 44px;
     border-radius: 0.75rem;
-    background: #4f46e5;
+    background: #1d4ed8;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);
 }
 
 .tutor-title-text h2 {
@@ -1009,7 +1009,7 @@ body {
     width: 16px;
     height: 16px;
     border: 2px solid var(--border-color);
-    border-top: 2px solid #6366f1;
+    border-top: 2px solid #2563eb;
     border-radius: 50%;
     animation: chat-spin 0.8s linear infinite;
 }
@@ -1034,8 +1034,8 @@ body {
 }
 
 .avatar-ai {
-    background: #4f46e5;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);
 }
 
 .avatar-user {
@@ -1081,7 +1081,7 @@ body {
 .message-label {
     font-size: 0.75rem;
     font-weight: 700;
-    color: #6366f1;
+    color: #2563eb;
 }
 
 .message-text {
@@ -1136,7 +1136,7 @@ body {
 
 .progress-fill {
     height: 100%;
-    background: #10b981;
+    background: #059669;
     border-radius: 4px;
     transition: width 0.5s ease;
 }
@@ -1233,8 +1233,8 @@ body {
 
 .reflection-input:focus {
     outline: none;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 .reflection-input::placeholder {
@@ -1248,7 +1248,7 @@ body {
     transform: translateY(-50%);
     width: 40px;
     height: 40px;
-    background: #4f46e5;
+    background: #1d4ed8;
     border: none;
     border-radius: 0.75rem;
     display: flex;
@@ -1256,13 +1256,13 @@ body {
     justify-content: center;
     cursor: pointer;
     color: white;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);
     transition: all 0.3s ease;
 }
 
 .send-button:hover {
     background: #4338ca;
-    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 6px 20px rgba(29, 78, 216, 0.3);
     transform: translateY(-50%) scale(1.05);
 }
 
@@ -1284,12 +1284,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(99, 102, 241, 0.3);
+    background: rgba(37, 99, 235, 0.3);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(99, 102, 241, 0.5);
+    background: rgba(37, 99, 235, 0.5);
 }
 
 /* ==================== LOGIN Y REGISTRO (PREMIUM DESIGN) ==================== */
@@ -1337,7 +1337,7 @@ body {
     border-radius: 1.5rem;
     padding: 2.5rem;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
-        0 0 40px rgba(99, 102, 241, 0.15);
+        0 0 40px rgba(37, 99, 235, 0.15);
     z-index: 10;
     animation: fadeIn 0.6s ease-out;
 }
@@ -1440,9 +1440,9 @@ body {
 
 .login-input:focus {
     outline: none;
-    border-color: #6366f1;
+    border-color: #2563eb;
     background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
 
 .login-btn {
@@ -1489,8 +1489,8 @@ body {
 }
 
 .login-success-msg {
-    background: rgba(16, 185, 129, 0.15);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: rgba(5, 150, 105, 0.15);
+    border: 1px solid rgba(5, 150, 105, 0.3);
     color: #34d399;
     padding: 0.75rem 1rem;
     border-radius: 0.75rem;
@@ -1651,14 +1651,14 @@ body {
 }
 
 .admin-table tbody tr.selected {
-    background: rgba(99, 102, 241, 0.08);
+    background: rgba(37, 99, 235, 0.08);
 }
 
 .admin-avatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #4f46e5;
+    background: #1d4ed8;
     color: white;
     font-weight: 700;
     font-size: 0.875rem;
@@ -1778,8 +1778,8 @@ body {
 .admin-input:focus,
 .admin-select:focus {
     outline: none;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 .admin-input:disabled {
@@ -1791,7 +1791,7 @@ body {
 
 .admin-btn-save {
     padding: 0.875rem;
-    background: #4f46e5;
+    background: #1d4ed8;
     border: none;
     border-radius: 0.75rem;
     color: white;
@@ -1802,14 +1802,14 @@ body {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     transition: all 0.2s ease;
     margin-top: 1rem;
 }
 
 .admin-btn-save:hover {
     background: #3730a3;
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.2);
     transform: translateY(-1px);
 }
 
@@ -1870,7 +1870,7 @@ body {
 
 .profile-card-premium:hover {
     transform: translateY(-2px);
-    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.25) !important;
+    box-shadow: 0 15px 35px rgba(37, 99, 235, 0.25) !important;
 }
 
 .chart-card, .profile-edit-card {
@@ -1882,8 +1882,8 @@ body {
 }
 
 .header-nav .nav-tab:hover {
-    background: rgba(99, 102, 241, 0.05) !important;
-    color: #4f46e5 !important;
+    background: rgba(37, 99, 235, 0.05) !important;
+    color: #1d4ed8 !important;
 }
 
 #btn-save-profile:hover {
@@ -1976,19 +1976,19 @@ body {
 
 .agent-step.active .step-spinner {
     display: block;
-    border-top-color: #6366f1;
+    border-top-color: #2563eb;
     animation: chat-spin 1s linear infinite;
 }
 
 /* State color transitions */
 .agent-step.active .step-icon-wrapper {
-    border-color: #6366f1;
-    background: rgba(99, 102, 241, 0.1);
-    box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
 }
 
 .agent-step.active .step-number {
-    color: #6366f1;
+    color: #2563eb;
 }
 
 .agent-step.active .step-name {
@@ -1997,16 +1997,16 @@ body {
 }
 
 .agent-step.completed .step-icon-wrapper {
-    border-color: #10b981;
-    background: rgba(16, 185, 129, 0.1);
+    border-color: #059669;
+    background: rgba(5, 150, 105, 0.1);
 }
 
 .agent-step.completed .step-number {
-    color: #10b981;
+    color: #059669;
 }
 
 .agent-step.completed .step-name {
-    color: #10b981;
+    color: #059669;
 }
 
 .agent-line {
@@ -2019,7 +2019,7 @@ body {
 }
 
 .agent-line.completed {
-    background: #10b981;
+    background: #059669;
 }
 
 .agent-status {
@@ -2029,7 +2029,7 @@ body {
     min-height: 18px;
     margin-top: 0.25rem;
     padding-left: 0.5rem;
-    border-left: 2px solid rgba(99, 102, 241, 0.5);
+    border-left: 2px solid rgba(37, 99, 235, 0.5);
 }
 
 /* ==================== MARKDOWN BODY STYLES ==================== */
@@ -2063,7 +2063,7 @@ body {
 }
 
 .message-text.markdown-body code {
-    background: rgba(99, 102, 241, 0.1);
+    background: rgba(37, 99, 235, 0.1);
     color: #818cf8;
     padding: 0.15rem 0.35rem;
     border-radius: 0.25rem;
@@ -2120,9 +2120,9 @@ body {
 
 .google-login-btn:hover {
     background: var(--bg-tertiary) !important;
-    border-color: #6366f1 !important;
+    border-color: #2563eb !important;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
 }
 
 .google-login-btn:active {
