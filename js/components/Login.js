@@ -110,11 +110,11 @@ function createRegisterFormFields() {
                     id="reg-code" 
                     class="login-input" 
                     placeholder="Ej. 202110293" 
-                    pattern="[0-9]{9}"
+                    pattern="^(?!0{9}$)[0-9]{9}$"
                     minlength="9"
                     maxlength="9"
                     inputmode="numeric"
-                    title="El código de estudiante debe constar de exactamente 9 dígitos numéricos."
+                    title="El código de estudiante debe constar de exactamente 9 dígitos numéricos y uno debe ser diferente de cero."
                     required
                 />
             </div>
