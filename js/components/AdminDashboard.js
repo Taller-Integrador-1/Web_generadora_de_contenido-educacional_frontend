@@ -395,10 +395,16 @@ function createAdminEditForm(student) {
             </div>
         </div>
 
-        <button class="admin-btn-save" onclick="saveStudentChanges('${student.usuario_id}')">
-            ${Icons.target}
-            Guardar Configuración
-        </button>
+        <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; width: 100%;">
+            <button class="admin-btn-save" onclick="saveStudentChanges('${student.usuario_id}')" style="flex-grow: 1; margin: 0;">
+                ${Icons.target}
+                Guardar Configuración
+            </button>
+            <button class="admin-btn-delete" onclick="deleteStudentAccount('${student.usuario_id}')" style="background: #ef4444; border: none; border-radius: 0.5rem; color: white; padding: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.95rem; transition: background 0.2s; min-width: 140px;">
+                ${Icons.alertTriangle}
+                Eliminar Cuenta
+            </button>
+        </div>
     `;
 }
 
@@ -526,6 +532,43 @@ async function saveStudentChanges(studentId) {
             <div class="login-error-msg" style="margin-bottom: 1.25rem;">
                 ${Icons.zap}
                 <span>${error.message}</span>
+            </div>
+        `;
+    }
+}
+
+async function deleteStudentAccount(studentId) {
+    const alertDiv = document.getElementById('admin-edit-alert');
+    if (!alertDiv) return;
+    alertDiv.innerHTML = '';
+
+    const confirmed = confirm(`¿Estás seguro de que deseas eliminar permanentemente la cuenta del estudiante con ID ${studentId}?\nEsta acción es irreversible y eliminará todo su historial académico, resoluciones y chat.`);
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/users/${studentId}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Error al eliminar la cuenta');
+
+        alert(`¡La cuenta del estudiante ${studentId} ha sido eliminada con éxito!`);
+        
+        selectedStudent = null;
+        const formContainer = document.getElementById('admin-form-container');
+        if (formContainer) {
+            formContainer.innerHTML = createAdminEmptyState();
+        }
+
+        await fetchAdminStudents();
+
+    } catch (error) {
+        console.error(error);
+        alertDiv.innerHTML = `
+            <div class="login-error-msg" style="margin-bottom: 1.25rem;">
+                ${Icons.alertTriangle}
+                <span>No se pudo eliminar: ${error.message}</span>
             </div>
         `;
     }
