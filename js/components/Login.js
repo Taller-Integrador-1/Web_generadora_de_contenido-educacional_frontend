@@ -116,6 +116,7 @@ function createRegisterFormFields() {
                     inputmode="numeric"
                     title="El código de estudiante debe constar de exactamente 9 dígitos numéricos y uno debe ser diferente de cero."
                     required
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"                
                 />
             </div>
         </div>
@@ -134,6 +135,7 @@ function createRegisterFormFields() {
                     pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+"
                     title="El nombre completo solo puede contener letras y espacios."
                     required
+                    oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]/g, '')"
                 />
             </div>
         </div>
