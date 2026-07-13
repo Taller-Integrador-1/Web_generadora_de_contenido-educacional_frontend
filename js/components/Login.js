@@ -426,7 +426,7 @@ async function handleGoogleLogin() {
 function togglePasswordVisibility(inputId, toggleBtn) {
     const input = document.getElementById(inputId);
     if (!input) return;
-    
+
     if (input.type === 'password') {
         input.type = 'text';
         toggleBtn.innerHTML = Icons.eyeOff;

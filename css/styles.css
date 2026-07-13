@@ -2190,3 +2190,45 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* ==================== EDITOR SCROLLABLE CONTAINER OVERRIDES ==================== */
+.editor-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.editor-scroll-container .code-area {
+    flex: none !important;
+    min-height: 450px;
+    height: auto !important;
+    overflow: visible !important;
+    width: calc(100% - 2rem) !important;
+    align-self: stretch !important;
+}
+
+.editor-scroll-container .CodeMirror {
+    height: auto !important;
+    min-height: 450px;
+    width: 100% !important;
+}
+
+.editor-scroll-container .CodeMirror-scroll {
+    height: auto !important;
+    min-height: 450px;
+    overflow-y: hidden !important;
+    overflow-x: auto !important;
+}
+
+.editor-scroll-container .console-output {
+    height: auto !important;
+    min-height: 192px;
+    flex: none !important;
+    overflow: visible !important;
+    margin-bottom: 1.5rem;
+    width: calc(100% - 2rem) !important;
+    align-self: stretch !important;
+}

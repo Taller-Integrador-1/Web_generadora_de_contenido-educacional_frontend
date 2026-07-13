@@ -1,6 +1,7 @@
 let codeEditorInstance = null;
 let activeExercise = null;
 let currentTopicExercises = [];
+let activeWS = null;
 
 const initialSnippets = {
     python: `# Sube un sílabo en el panel de administración para comenzar
@@ -56,45 +57,43 @@ function createCodeEditor() {
             </div>
         </div>
 
-        <!-- Caja de Descripción del Reto -->
-        <div class="reto-description-box" id="current-reto-description-box" style="margin: 1rem 1rem 0 1rem; padding: 1rem; background: var(--description-box-bg); border: 1px solid var(--description-box-border); border-radius: 0.75rem; color: var(--description-box-color); font-size: 0.85rem; line-height: 1.5; display: none; transition: background 0.3s, border-color 0.3s, color 0.3s;">
-            <div style="font-weight: 700; color: #a855f7; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
-                ${Icons.lightbulb}
-                <span>Descripción del Reto</span>
-            </div>
-            <p id="current-reto-description" style="margin: 0; color: var(--description-text-color); font-weight: 400; white-space: pre-wrap; transition: color 0.3s;"></p>
-            
-            <div id="current-reto-casos-prueba-section" style="margin-top: 0.75rem; border-top: 1px dashed var(--description-dashed-border); padding-top: 0.5rem; display: none; transition: border-color 0.3s;">
-                <div style="font-weight: 700; color: #6366f1; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem;">
-                    ${Icons.target}
-                    <span>Casos de Prueba de Validación</span>
+        <div class="editor-scroll-container">
+            <!-- Caja de Descripción del Reto -->
+            <div class="reto-description-box" id="current-reto-description-box" style="margin: 1rem 1rem 0 1rem; padding: 1rem; background: var(--description-box-bg); border: 1px solid var(--description-box-border); border-radius: 0.75rem; color: var(--description-box-color); font-size: 0.85rem; line-height: 1.5; display: none; transition: background 0.3s, border-color 0.3s, color 0.3s;">
+                <div style="font-weight: 700; color: #a855f7; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                    ${Icons.lightbulb}
+                    <span>Descripción del Reto</span>
                 </div>
-                <div id="current-reto-casos-prueba" style="margin: 0; font-family: monospace; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; transition: color 0.3s;"></div>
-            </div>
-        </div>
-
-        <div class="code-area" id="codemirror-container">
-            <!-- CodeMirror se inyectará aquí -->
-        </div>
-
-        <div class="console-output">
-            <div class="console-header">
-                <div class="console-title">
-                    <div class="console-icon-wrapper">
-                        ${Icons.alertCircle}
+                <p id="current-reto-description" style="margin: 0; color: var(--description-text-color); font-weight: 400; white-space: pre-wrap; transition: color 0.3s;"></p>
+                
+                <div id="current-reto-casos-prueba-section" style="margin-top: 0.75rem; border-top: 1px dashed var(--description-dashed-border); padding-top: 0.5rem; display: none; transition: border-color 0.3s;">
+                    <div style="font-weight: 700; color: #6366f1; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem;">
+                        ${Icons.target}
+                        <span>Casos de Prueba de Validación</span>
                     </div>
-                    <span>Consola de Salida</span>
-                </div>
-                <div class="console-indicators">
-                    <div class="indicator indicator-error"></div>
-                    <div class="indicator indicator-warning"></div>
-                    <div class="indicator indicator-idle"></div>
+                    <div id="current-reto-casos-prueba" style="margin: 0; font-family: monospace; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; transition: color 0.3s;"></div>
                 </div>
             </div>
-            <div class="console-content" id="console-output-lines">
-                <div class="console-line normal">
-                    <span>Presiona "Ejecutar Código" para ver la salida.</span>
+
+            <div class="code-area" id="codemirror-container">
+                <!-- CodeMirror se inyectará aquí -->
+            </div>
+
+            <div class="console-output">
+                <div class="console-header">
+                    <div class="console-title">
+                        <div class="console-icon-wrapper">
+                            ${Icons.alertCircle}
+                        </div>
+                        <span>Consola de Salida</span>
+                    </div>
+                    <div class="console-indicators">
+                        <div class="indicator indicator-error"></div>
+                        <div class="indicator indicator-warning"></div>
+                        <div class="indicator indicator-idle"></div>
+                    </div>
                 </div>
+                <div class="console-content" id="console-output-lines" style="height: auto; min-height: 72px; overflow: visible; box-sizing: border-box; padding: 1.25rem; font-family: monospace; white-space: pre-wrap;" onclick="focusConsoleInput(event)">Presiona "Ejecutar Código" para ver la salida.<span id="console-interactive-input" contenteditable="true" style="outline: none; caret-color: #818cf8; color: #34d399; font-weight: bold; min-width: 5px; display: inline-block;" onkeydown="handleConsoleInputKey(event)"></span></div>
             </div>
         </div>
     `;
@@ -119,7 +118,8 @@ function initCodeEditor() {
         lineNumbers: true,
         indentUnit: 4,
         matchBrackets: true,
-        autoCloseBrackets: true
+        autoCloseBrackets: true,
+        viewportMargin: Infinity
     });
 
     if (AppState.currentTopic) {
@@ -392,104 +392,80 @@ function changeLanguage() {
 async function executeCode() {
     if (!codeEditorInstance) return;
 
+    if (activeWS) {
+        try { activeWS.close(); } catch(e){}
+    }
+
     const code = codeEditorInstance.getValue();
     const lang = document.getElementById('language-selector').value;
     const consoleContainer = document.getElementById('console-output-lines');
 
-    consoleContainer.innerHTML = `
-        <div class="console-line normal">
-            <span>Ejecutando código en los servidores...</span>
-        </div>
-    `;
+    consoleContainer.innerHTML = `Ejecutando código en los servidores...\n<span id="console-interactive-input" contenteditable="true" style="outline: none; caret-color: #818cf8; color: #34d399; font-weight: bold; min-width: 5px; display: inline-block;" onkeydown="handleConsoleInputKey(event)"></span>`;
+    
+    setTimeout(() => focusConsoleInput(), 50);
 
     const pistonLang = lang === 'python' ? 'python' : 'java';
-    const pistonVersion = lang === 'python' ? '3.10.0' : '15.0.2';
 
-    try {
-        let codeToSend = code;
-        if (lang === 'java') {
-            codeToSend = codeToSend.replace(/[^\x00-\x7F]/g, (char) => {
-                return '\\u' + char.charCodeAt(0).toString(16).padStart(4, '0');
-            });
-
-            if (!codeToSend.includes('setOut') && !codeToSend.includes('UTF-8')) {
-                codeToSend = codeToSend.replace(
-                    /public static void main\(String\[\] args\)([^{]*){/,
-                    'public static void main(String[] args) throws Exception {\n        System.setOut(new java.io.PrintStream(System.out, true, "UTF-8"));'
-                );
-            }
-        }
-
-        const response = await fetch(`${API_BASE_URL}/api/execute`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                language: pistonLang,
-                version: pistonVersion,
-                files: [
-                    { name: lang === 'java' ? 'Main.java' : 'main.py', content: codeToSend }
-                ]
-            })
+    let codeToSend = code;
+    if (lang === 'java') {
+        codeToSend = codeToSend.replace(/[^\x00-\x7F]/g, (char) => {
+            return '\\u' + char.charCodeAt(0).toString(16).padStart(4, '0');
         });
 
-        if (response.status === 401) {
-            throw new Error("API requiere autorización.");
+        if (!codeToSend.includes('setOut') && !codeToSend.includes('UTF-8')) {
+            codeToSend = codeToSend.replace(
+                /public static void main\(String\[\] args\)([^{]*){/,
+                'public static void main(String[] args) throws Exception {\n        System.setOut(new java.io.PrintStream(System.out, true, "UTF-8"));'
+            );
         }
-
-        const data = await response.json();
-
-        if (data.compile && data.compile.stderr) {
-            const compileLines = data.compile.stderr.split('\n').filter(l => l.trim() !== '');
-            consoleContainer.innerHTML = `
-                <div class="console-line error">
-                    ${Icons.alertCircle}
-                    <span><strong>Error de compilación:</strong></span>
-                </div>
-            ` + compileLines.map(line => `
-                <div class="console-line error">
-                    <span style="white-space: pre-wrap; word-break: break-all;">${line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
-                </div>
-            `).join('');
-        } else if (data.run) {
-            let output = data.run.stdout || data.run.stderr;
-            let type = data.run.code !== 0 ? 'error' : 'normal';
-
-            if (!output || output.trim() === '') {
-                if (data.run.signal === 'SIGKILL' || data.run.message === 'Time limit exceeded') {
-                    output = '[Error] Tiempo límite excedido. El programa tardó demasiado en ejecutarse.';
-                    type = 'error';
-                } else {
-                    output = '[Ejecución completada sin salida]';
-                }
-            }
-
-            const lines = output.split('\n').filter(l => l.trim() !== '');
-            consoleContainer.innerHTML = lines.map(line => `
-                <div class="console-line ${type}">
-                    ${type === 'error' ? Icons.alertCircle : ''}
-                    <span style="white-space: pre-wrap; word-break: break-all;">${line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
-                </div>
-            `).join('');
-        } else {
-            consoleContainer.innerHTML = `
-                <div class="console-line error">
-                    ${Icons.alertCircle}
-                    <span>Error al procesar la respuesta del servidor.</span>
-                </div>
-            `;
-        }
-
-    } catch (error) {
-        console.error("Error executing code:", error);
-        consoleContainer.innerHTML = `
-            <div class="console-line error">
-                ${Icons.alertCircle}
-                <span>Error de conexión: ${error.message}</span>
-            </div>
-        `;
     }
+
+    const wsUrl = API_BASE_URL.replace(/^http/, 'ws') + '/api/ws/execute';
+    
+    console.log("[Terminal WS] Conectando a", wsUrl);
+    activeWS = new WebSocket(wsUrl);
+
+    activeWS.onopen = () => {
+        activeWS.send(JSON.stringify({
+            language: pistonLang,
+            code: codeToSend
+        }));
+    };
+
+    activeWS.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        const inputSpan = document.getElementById('console-interactive-input');
+        if (!inputSpan) return;
+
+        if (msg.type === 'stdout' || msg.type === 'stderr' || msg.type === 'status') {
+            const data = msg.data;
+            const textNode = document.createTextNode(data);
+            inputSpan.before(textNode);
+            consoleContainer.scrollTop = consoleContainer.scrollHeight;
+        } else if (msg.type === 'exit') {
+            const code = msg.code;
+            const textNode = document.createTextNode(`\n\n[Proceso terminado con código ${code}]\n`);
+            inputSpan.before(textNode);
+            consoleContainer.scrollTop = consoleContainer.scrollHeight;
+            
+            inputSpan.removeAttribute('contenteditable');
+            inputSpan.style.caretColor = 'transparent';
+        }
+    };
+
+    activeWS.onerror = (error) => {
+        console.error("[Terminal WS] Error:", error);
+        const inputSpan = document.getElementById('console-interactive-input');
+        if (inputSpan) {
+            const textNode = document.createTextNode(`\nError de conexión con el servidor de ejecución.\n`);
+            inputSpan.before(textNode);
+        }
+    };
+
+    activeWS.onclose = () => {
+        console.log("[Terminal WS] Conexión cerrada.");
+        activeWS = null;
+    };
 }
 
 function resetCode() {
@@ -556,13 +532,16 @@ async function validateCodeWithIA() {
             }
         }
 
+        const stdinValue = '';
+
         const runResponse = await fetch(`${API_BASE_URL}/api/execute`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 language: pistonLang,
                 version: pistonVersion,
-                files: [{ name: lang === 'java' ? 'Main.java' : 'main.py', content: codeToSend }]
+                files: [{ name: lang === 'java' ? 'Main.java' : 'main.py', content: codeToSend }],
+                stdin: stdinValue
             })
         });
 
@@ -858,3 +837,43 @@ window.showRegressionModal = showRegressionModal;
 window.regressToTopic = regressToTopic;
 window.closeRegressionModalAndAskHelp = closeRegressionModalAndAskHelp;
 window.closeRegressionModal = closeRegressionModal;
+
+function focusConsoleInput(event) {
+    const inputSpan = document.getElementById('console-interactive-input');
+    if (inputSpan) {
+        inputSpan.focus();
+    }
+}
+
+function handleConsoleInputKey(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        const inputSpan = event.target;
+        const text = inputSpan.textContent;
+        
+        // Append input value permanently to output logs
+        const permanentSpan = document.createElement('span');
+        permanentSpan.className = 'console-stdin-echo';
+        permanentSpan.style.color = '#34d399';
+        permanentSpan.style.fontWeight = 'bold';
+        permanentSpan.textContent = text + '\n';
+        inputSpan.before(permanentSpan);
+        
+        // Clear input span
+        inputSpan.textContent = '';
+        
+        // Send to WebSocket
+        if (activeWS && activeWS.readyState === WebSocket.OPEN) {
+            activeWS.send(JSON.stringify({ type: 'stdin', data: text + '\n' }));
+        }
+        
+        // Scroll to bottom
+        const consoleContainer = document.getElementById('console-output-lines');
+        if (consoleContainer) {
+            consoleContainer.scrollTop = consoleContainer.scrollHeight;
+        }
+    }
+}
+
+window.focusConsoleInput = focusConsoleInput;
+window.handleConsoleInputKey = handleConsoleInputKey;
