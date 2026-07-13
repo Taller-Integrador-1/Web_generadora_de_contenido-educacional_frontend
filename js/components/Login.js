@@ -88,10 +88,13 @@ function createLoginFormFields() {
                 <input 
                     type="password" 
                     id="login-password" 
-                    class="login-input" 
+                    class="login-input password-input" 
                     placeholder="••••••••" 
                     required
                 />
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('login-password', this)">
+                    ${Icons.eye}
+                </button>
             </div>
         </div>
     `;
@@ -167,12 +170,15 @@ function createRegisterFormFields() {
                 <input 
                     type="password" 
                     id="reg-password" 
-                    class="login-input" 
+                    class="login-input password-input" 
                     placeholder="Mayúscula, minúscula, número y símbolo" 
                     pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':,./?~|]).{8,}"
                     title="La contraseña debe tener al menos 8 caracteres, e incluir una mayúscula, una minúscula, un número y un carácter especial."
                     required
                 />
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('reg-password', this)">
+                    ${Icons.eye}
+                </button>
             </div>
         </div>
     `;
@@ -335,7 +341,7 @@ let firebaseAuthInstance;
 
 function getFirebaseAuth() {
     if (firebaseAuthInstance) return firebaseAuthInstance;
-    
+
     const firebaseConfig = {
         authDomain: "ed-tech-329d6.firebaseapp.com",
         projectId: "ed-tech-329d6"
@@ -354,16 +360,16 @@ function getFirebaseAuth() {
 async function handleGoogleLogin() {
     const alertContainer = document.getElementById('login-alert-container');
     if (alertContainer) alertContainer.innerHTML = '';
-    
+
     try {
         const authInstance = getFirebaseAuth();
         const provider = new firebase.auth.GoogleAuthProvider();
-        
+
         provider.setCustomParameters({ prompt: 'select_account' });
-        
+
         const result = await authInstance.signInWithPopup(provider);
         const user = result.user;
-        
+
         if (!user || !user.email) {
             throw new Error('No se pudo obtener información del usuario de Google.');
         }
@@ -403,7 +409,7 @@ async function handleGoogleLogin() {
         setTimeout(() => {
             bootstrapApp();
         }, 1000);
-        
+
     } catch (error) {
         console.error("Google Auth error:", error);
         if (alertContainer) {
@@ -414,5 +420,18 @@ async function handleGoogleLogin() {
                 </div>
             `;
         }
+    }
+}
+
+function togglePasswordVisibility(inputId, toggleBtn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        toggleBtn.innerHTML = Icons.eyeOff;
+    } else {
+        input.type = 'password';
+        toggleBtn.innerHTML = Icons.eye;
     }
 }
