@@ -613,8 +613,6 @@ async function validateCodeWithIA() {
 
         if (!validateResponse.ok) throw new Error("Error al conectar con la API de validación.");
         const valResult = await validateResponse.json();
-
-        const feedbackLines = valResult.feedback.split('\n');
         const valColor = valResult.is_correct ? '#10b981' : '#ef4444';
         const valIcon = valResult.is_correct ? Icons.award : Icons.alertCircle;
 
@@ -623,11 +621,10 @@ async function validateCodeWithIA() {
                 ${valIcon}
                 <span>Resultado: ${valResult.is_correct ? 'CORRECTO (¡Reto Superado!)' : 'REVISAR SOLUCIÓN'}</span>
             </div>
-        ` + feedbackLines.map(line => `
-            <div class="console-line" style="color: ${valResult.is_correct ? '#065f46' : '#991b1b'}; background: ${valResult.is_correct ? '#ecfdf5' : '#fef2f2'}; border-radius: 4px; padding: 4px 8px; margin-top: 0.25rem;">
-                <span style="white-space: pre-wrap; word-break: break-all;">${line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
+            <div class="console-line" style="color: ${valResult.is_correct ? '#065f46' : '#991b1b'}; background: ${valResult.is_correct ? '#ecfdf5' : '#fef2f2'}; border-radius: 8px; padding: 10px 14px; margin-top: 0.5rem; line-height: 1.5;">
+                <span style="white-space: pre-wrap; word-break: break-all; font-family: sans-serif; font-size: 0.9rem;">${valResult.feedback.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
             </div>
-        `).join('');
+        `;
 
         if (!valResult.is_correct) {
             const failKey = `consecutive_failures_${AppState.usuario_id}_${activeExercise.id}`;

@@ -102,7 +102,6 @@ function createStudentsView() {
                                 <th>Estudiante</th>
                                 <th>Nivel</th>
                                 <th>Experiencia</th>
-                                <th>Progreso</th>
                                 <th>Tema Actual</th>
                             </tr>
                         </thead>
@@ -449,11 +448,6 @@ function renderStudentsTable() {
                 </td>
                 <td>
                     <span class="admin-badge admin-badge-purple">${student.xp} XP</span>
-                </td>
-                <td>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span class="admin-badge admin-badge-emerald">${student.porcentaje}%</span>
-                    </div>
                 </td>
                 <td>
                     <span class="admin-badge admin-badge-amber">${student.tema_actual}</span>
